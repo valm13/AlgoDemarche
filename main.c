@@ -63,7 +63,7 @@ void gestionEvenement(EvenementGfx evenement)
 	switch (evenement)
 	{
 		case Initialisation:
-			image = lisBMPRGB("picture/pic0000.bmp");
+			image = lisBMPRGB("Pictures/pic001.bmp");
 			rafraichisFenetre();
 			demandeTemporisation(-1);
 			break;
