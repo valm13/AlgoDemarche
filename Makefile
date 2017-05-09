@@ -1,13 +1,13 @@
 GCC = gcc
-INCLUDES = -Ilibisen -I/usr/include/GL
+INCLUDES = -IlibISEN -I/usr/include/GL
 CFLAGS = -Wall -g2 -std=gnu99
 LDFLAGS = -lm -lglut -lGL -lX11
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 
-LIBSRCS = $(wildcard libisen/*.c)
-LIBHEAD = $(wildcard libisen/*.h)
+LIBSRCS = $(wildcard libISEN/*.c)
+LIBHEAD = $(wildcard libISEN/*.h)
 LIBOBJS = $(LIBSRCS:.c=.o)
 LIBNAME = libisentlib.a
 
@@ -42,7 +42,7 @@ zip:
 	tar -cvzf libisentlib.tgz *.[ch] *.bmp *.pdf makefile
 
 clean:
-	rm -f *~ *.o libisen/*.o *.d libisen/*.d tests/*.d tests/*.o
+	rm -f *~ *.o libISEN/*.o *.d libISEN/*.d tests/*.d tests/*.o
 
 deepclean: clean
 	rm -f tpGraph tests/exemple tests/exempleTortue libisentlib.a
