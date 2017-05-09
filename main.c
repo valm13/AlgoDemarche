@@ -82,7 +82,8 @@ void gestionEvenement(EvenementGfx evenement)
 			if (image != NULL) // Si l'image a pu etre lue
 			{
 				// On affiche l'image
-				ecrisImage((largeurFenetre()-image->largeurImage)/2, (hauteurFenetre()-image->hauteurImage)/2, image->largeurImage, image->hauteurImage, image->donneesRGB);
+				//ecrisImage((largeurFenetre()-image->largeurImage)/2, (hauteurFenetre()-image->hauteurImage)/2, image->largeurImage, image->hauteurImage, image->donneesRGB);
+				ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
 			}
 			else
 			{
