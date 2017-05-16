@@ -4,6 +4,7 @@
 #include "GfxLib.h"
 #include "BmpLib.h" 
 #include "ESLib.h"
+#include "Affichage.h"
 
 void creaBouton (float xmin,float ymin,float xmax,float ymax)
 {
@@ -17,7 +18,7 @@ void creaBouton (float xmin,float ymin,float xmax,float ymax)
 }
 
 
-void AffMenu (&EtatMenu, SelecBouton)
+void AffMenu (int EtatMenu, int SelecBouton)
 {
 	if (EtatMenu == 0)
 	{
@@ -48,16 +49,19 @@ void AffMenu (&EtatMenu, SelecBouton)
 		creaBouton (largeurFenetre()/24, hauteurFenetre()/6, largeurFenetre()*6/24, hauteurFenetre()*2/12);
 
 
-	if (SelecBouton == 1)  //Apprentissage
-	{
-		couleurCourante (0, 0, 0);
-		creaBouton (largeurFenetre()/6+20, hauteurFenetre()/3+20, largeurFenetre()*2/6+20, hauteurFenetre()*2/3+20);
-	}
+		if (SelecBouton == 1)  //Apprentissage
+		{
+			couleurCourante (0, 0, 0);
+			creaBouton (largeurFenetre()/6+20, hauteurFenetre()/3+20, largeurFenetre()*2/6+20, hauteurFenetre()*2/3+20);
+		}
 
-	else if (SelecBouton == 2)  //Reconnaissance
-	{
-		couleurCourante (0, 0, 0);
-		creaBouton (largeurFenetre()*4/6+20, hauteurFenetre()/3+20, largeurFenetre()*5/6+20, hauteurFenetre()*2/3+20);
+		else if (SelecBouton == 2)  //Reconnaissance
+		{
+			couleurCourante (0, 0, 0);
+			creaBouton (largeurFenetre()*4/6+20, hauteurFenetre()/3+20, largeurFenetre()*5/6+20, hauteurFenetre()*2/3+20);
+		}
 	}
+	else;
+	
 	
 }
