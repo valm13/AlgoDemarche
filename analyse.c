@@ -16,10 +16,11 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 	determ det;
 	for(int i=0;i<nbpixel;i=i+3)
 	{
-		printf("pixel numéro %d",i/3);
+		printf("pixel numéro %d\n",i/3);
 		bleu=img->donneesRGB[i];
 		vert=img->donneesRGB[i+1];
 		rouge=img->donneesRGB[i+2];
+		
 		determineMinColor(bleu,vert,rouge,&det);
 		determineMaxColor(bleu,vert,rouge,&det);
 		printf("det.min.c = %d\n",det.min.c);

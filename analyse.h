@@ -6,15 +6,13 @@ typedef struct pixelhsv{
 }pixelhsv;
 
 typedef struct tabpixel{
-	pixelhsv p[1920][1080];
+	pixelhsv p[LARGEUR][HAUTEUR];
 }tabpixel;
 
 typedef struct infocoul{
 	int c; // 1=Bleu	2=Vert	3=Rouge
 	char v; // Valeur
 }infocoul;
-
-
 
 typedef struct determ{
 	infocoul min,max;
