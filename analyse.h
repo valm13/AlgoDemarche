@@ -1,8 +1,8 @@
-#define LARGEUR 1920
-#define HAUTEUR 1080
+#define LARGEUR 1920	// Largeur de l'image
+#define HAUTEUR 1080	// Hauteur de l'image
 
 typedef struct pixelhsv{
-	int h,s,v;
+	int h,s,v; // Repere HSV	H: Hue	S: Saturation	V: Value
 }pixelhsv;
 
 typedef struct tabpixel{
@@ -15,7 +15,7 @@ typedef struct infocoul{
 }infocoul;
 
 typedef struct determ{
-	infocoul min,max;
+	infocoul min,max; // Valeur Min et Max + Info sur la couleur correspondante
 }determ;
 
 

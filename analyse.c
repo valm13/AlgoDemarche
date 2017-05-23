@@ -2,7 +2,7 @@
 #include "BmpLib.h"
 #include "analyse.h"
 
-void chargeImage(char nomFichier[11],DonneesImageRGB **img)
+void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image grâce au nom de celle-ci
 {
 	*img = lisBMPRGB(nomFichier);
 }
@@ -11,27 +11,30 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 {
 	char bleu,vert,rouge;
 	int h,s,v;
-	tabpixel tp; // Cause un core-dumped lors de la déclaration du tableau de pixels...
+	tabpixel tp; // Adapter la taille du tableau en dynamique
 	int nbpixel = img->largeurImage*img->hauteurImage;
 	determ det;
-	for(int i=0;i<nbpixel;i=i+3)
+	for(int i = 0; i < img->hauteurImage; i++)
 	{
-		printf("pixel numéro %d\n",i/3);
-		bleu=img->donneesRGB[i];
-		vert=img->donneesRGB[i+1];
-		rouge=img->donneesRGB[i+2];
-		
-		determineMinColor(bleu,vert,rouge,&det);
-		determineMaxColor(bleu,vert,rouge,&det);
-		printf("det.min.c = %d\n",det.min.c);
-		printf("det.max.c = %d\n",det.max.c);
-		h=calculH(det,rouge,vert,bleu);
-		s=calculS(det);
-		v=det.max.v;
-		tp.p[i].h=h;
-		tp.p[i].s=s;
-		tp.p[i].v=v;
-		printf("\nPixel numero %d :\nh = %d\ns = %d\nv = %d\n",i,tp.p[i].h,tp.p[i].s,tp.p[i].v);
+		for(int j = 0; j < img->largeurImage; j++)
+		{
+			bleu=img->donneesRGB[i * img->largeurImage * 3 + j * 3];
+			vert=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1];
+			rouge=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2];
+			
+			determineMinColor(bleu,vert,rouge,&det);	// Determine le max et le min pour effectuer les calculs de H S et V
+			determineMaxColor(bleu,vert,rouge,&det);
+			//~ printf("det.min.c = %d\n",det.min.c);
+			//~ printf("det.max.c = %d\n",det.max.c);
+			h=calculH(det,rouge,vert,bleu);
+			s=calculS(det);
+			v=det.max.v;
+			
+			tp.p[i][j].h=h;	// Rentre les valeurs de H S et V dans un tableau de pixel(une image)
+			tp.p[i][j].s=s;
+			tp.p[i][j].v=v;
+			//~ printf("\nPixel numero %d :\nh = %d\ns = %d\nv = %d\n",i,tp.p[i].h,tp.p[i].s,tp.p[i].v);
+		}
 	}
 }
 
