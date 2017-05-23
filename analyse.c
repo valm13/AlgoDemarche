@@ -1,10 +1,15 @@
 #include <stdio.h>
 #include "BmpLib.h"
 #include "analyse.h"
+#include "toolbox.h"
 
 void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image grâce au nom de celle-ci
 {
 	*img = lisBMPRGB(nomFichier);
+	if((*img == NULL))
+	{
+		fprintf(stderr, "erreur l'image %s n'a pas pu être charger", nomFichier);
+	}
 }
 
 void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
@@ -12,11 +17,11 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 	char bleu,vert,rouge;
 	int h,s,v;
 	tabpixel tp; // Adapter la taille du tableau en dynamique
-	int nbpixel = img->largeurImage*img->hauteurImage;
+//	int nbpixel = img->largeurImage*img->hauteurImage;
 	determ det;
-	for(int i = 0; i < img->hauteurImage; i++)
+	for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
 	{
-		for(int j = 0; j < img->largeurImage; j++)
+		for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
 		{
 			bleu=img->donneesRGB[i * img->largeurImage * 3 + j * 3];
 			vert=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1];
@@ -24,8 +29,8 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 			
 			determineMinColor(bleu,vert,rouge,&det);	// Determine le max et le min pour effectuer les calculs de H S et V
 			determineMaxColor(bleu,vert,rouge,&det);
-			//~ printf("det.min.c = %d\n",det.min.c);
-			//~ printf("det.max.c = %d\n",det.max.c);
+			// printf("det.min.c = %d\n",det.min.c);
+			// printf("det.max.c = %d\n",det.max.c);
 			h=calculH(det,rouge,vert,bleu);
 			s=calculS(det);
 			v=det.max.v;
@@ -33,7 +38,6 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 			tp.p[i][j].h=h;	// Rentre les valeurs de H S et V dans un tableau de pixel(une image)
 			tp.p[i][j].s=s;
 			tp.p[i][j].v=v;
-			//~ printf("\nPixel numero %d :\nh = %d\ns = %d\nv = %d\n",i,tp.p[i].h,tp.p[i].s,tp.p[i].v);
 		}
 	}
 }

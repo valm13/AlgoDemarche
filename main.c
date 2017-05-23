@@ -1,6 +1,8 @@
 #include <stdlib.h> 
 #include <stdio.h> 
 #include <math.h> 
+#include <string.h>
+#include <sys/resource.h>
 #include "GfxLib.h"
 #include "BmpLib.h"
 #include "ESLib.h"
@@ -19,8 +21,24 @@ void gestionEvenement(EvenementGfx evenement);
 
 int main(int argc, char **argv)
 {
+	const rlim_t StackSize = sizeof(pixelhsv) * LARGEUR * HAUTEUR;
+	struct rlimit rl;
+	int result;
+
+	result = getrlimit(RLIMIT_STACK, &rl);
+	if (result == 0)
+	{
+		printf("Changing stack limit from %ld to %ld\n", rl.rlim_cur, rl.rlim_cur + StackSize );
+		rl.rlim_cur += StackSize;
+		result = setrlimit(RLIMIT_STACK, &rl);
+	}
+	else
+	{
+		fprintf(stderr, "eror, can't read stack information\n");
+	}
 	initialiseGfx(argc, argv);
 	
+
 	prepareFenetreGraphique("Analyseur de Demarche", LargeurFenetre, HauteurFenetre);
 	
 	/* Lance la boucle qui aiguille les evenements sur la fonction gestionEvenement ci-apres,
@@ -43,7 +61,7 @@ void gestionEvenement(EvenementGfx evenement)
 	{
 		case Initialisation:
 			demandeTemporisation(20);
-			strcpy(nomImage,"pic001.bmp");
+			strcpy(nomImage,"Pictures/pic001.bmp");
 			printf("\nChargement de l'image\n");
 			//image = lisBMPRGB(nomImage);
 			chargeImage(nomImage,&image);
