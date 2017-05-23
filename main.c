@@ -5,13 +5,14 @@
 #include "BmpLib.h"
 #include "ESLib.h"
 #include "Affichage.h"
+#include "analyse.h"
 
+// Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
 #define HauteurFenetre 600
 
-
-void cercle(float centreX, float centreY, float rayon);
-
+/* La fonction de gestion des evenements, appelee automatiquement par le systeme
+des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement);
 
 
@@ -20,50 +21,35 @@ int main(int argc, char **argv)
 {
 	initialiseGfx(argc, argv);
 	
-	prepareFenetreGraphique("GfxLib", LargeurFenetre, HauteurFenetre);
+	prepareFenetreGraphique("Analyseur de Demarche", LargeurFenetre, HauteurFenetre);
 	
+	/* Lance la boucle qui aiguille les evenements sur la fonction gestionEvenement ci-apres,
+		qui elle-meme utilise fonctionAffichage ci-dessous */
 	lanceBoucleEvenements();
 	
 	return 0;
 }
 
-
-
-
-void cercle(float centreX, float centreY, float rayon)
-{
-	const int Pas = 20;
-	const double PasAngulaire = 2.*M_PI/Pas;
-	int index;
-
-	
-	for (index = 0; index < Pas; ++index)
-	{
-		const double angle = 2.*M_PI*index/Pas;
-		triangle(centreX, centreY,
-				 centreX+rayon*cos(angle), centreY+rayon*sin(angle),
-				 centreX+rayon*cos(angle+PasAngulaire), centreY+rayon*sin(angle+PasAngulaire));
-	}
-	
-}
-
-
+/* La fonction de gestion des evenements, appelee automatiquement par le systeme
+des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
-	
-	static bool pleinEcran = false; 
-	static DonneesImageRGB *image = NULL; 
-
-
-	
+	static bool pleinEcran = false;
+	static DonneesImageRGB *image = NULL;
+	static char nomImage[11];
 	switch (evenement)
 	{
 		case Initialisation:
-			image = lisBMPRGB("Pictures/pic001.bmp");
-			rafraichisFenetre();
-			demandeTemporisation(-1);
+			demandeTemporisation(20);
+			strcpy(nomImage,"pic001.bmp");
+			printf("\nChargement de l'image\n");
+			//image = lisBMPRGB(nomImage);
+			chargeImage(nomImage,&image);
+			printf("Image chargée\n");
+			printf("image->largeurImage = %d\n",image->largeurImage);
+			rgbToHsv(image);
 			break;
 		
 		case Temporisation:
@@ -92,7 +78,7 @@ void gestionEvenement(EvenementGfx evenement)
 
 			switch (caractereClavier())
 			{
-				case 'Q':
+				case 'Q': /* Pour sortir quelque peu proprement du programme */
 				case 'q':
 					libereDonneesImageRGB(&image);
 					termineBoucleEvenements();
@@ -100,7 +86,7 @@ void gestionEvenement(EvenementGfx evenement)
 
 				case 'F':
 				case 'f':
-					pleinEcran = !pleinEcran;
+					pleinEcran = !pleinEcran; // Changement de mode plein ecran
 					if (pleinEcran)
 						modePleinEcran();
 					else
@@ -109,6 +95,8 @@ void gestionEvenement(EvenementGfx evenement)
 
 				case 'R':
 				case 'r':
+					// Configure le systeme pour generer un message Temporisation
+					// toutes les 20 millisecondes (rapide)
 					demandeTemporisation(20);
 					break;
 
@@ -119,6 +107,7 @@ void gestionEvenement(EvenementGfx evenement)
 
 				case 'S':
 				case 's':
+					// Configure le systeme pour ne plus generer de message Temporisation
 					demandeTemporisation(-1);
 					break;
 			}
