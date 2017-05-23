@@ -35,3 +35,8 @@
 
 #tempory file
 *.swp
+
+#pictures files
+*.jpeg
+*.jpg
+*.bmp

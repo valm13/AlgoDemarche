@@ -11,7 +11,7 @@ LIBHEAD = $(wildcard libISEN/*.h)
 LIBOBJS = $(LIBSRCS:.c=.o)
 LIBNAME = libisentlib.a
 
-all: tpGraph
+all: gait_analysis
 
 $(LIBNAME): $(LIBOBJS) $(LIBHEAD)
 	ar r $(LIBNAME) $(LIBOBJS)
@@ -19,7 +19,7 @@ $(LIBNAME): $(LIBOBJS) $(LIBHEAD)
 
 tests: exemple exempleTortue
 
-tpGraph: $(OBJS) $(LIBNAME)
+gait_analysis: $(OBJS) $(LIBNAME)
 	@echo Link $@
 	$(GCC) $(INCLUDES) $(CFLAGS) $(OBJS) -o $@ $(LIBNAME) $(LDFLAGS)
 
