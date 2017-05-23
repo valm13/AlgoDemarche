@@ -57,13 +57,11 @@ void gestionEvenement(EvenementGfx evenement)
 	static int SelecBouton = 0;
 	static tabbouton t;
 	static bool pleinEcran = false; 
-	static DonneesImageRGB *image = NULL; 
 
 	
 	switch (evenement)
 	{
 		case Initialisation:
-			image = lisBMPRGB("Pictures/pic001.bmp");
 			rafraichisFenetre();
 			sauveTexteBouton();
 			
