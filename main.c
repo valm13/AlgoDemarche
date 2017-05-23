@@ -4,7 +4,10 @@
 #include "GfxLib.h"
 #include "BmpLib.h"
 #include "ESLib.h"
+#include "GereClic.h"
+#include "Bouton.h"
 #include "Affichage.h"
+
 
 #define LargeurFenetre 800
 #define HauteurFenetre 600
@@ -52,10 +55,9 @@ void gestionEvenement(EvenementGfx evenement)
 {
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
-	
+	static tabbouton t;
 	static bool pleinEcran = false; 
 	static DonneesImageRGB *image = NULL; 
-
 
 	
 	switch (evenement)
@@ -63,7 +65,9 @@ void gestionEvenement(EvenementGfx evenement)
 		case Initialisation:
 			image = lisBMPRGB("Pictures/pic001.bmp");
 			rafraichisFenetre();
-			demandeTemporisation(-1);
+			sauveTexteBouton();
+			
+			demandeTemporisation(1);
 			break;
 		
 		case Temporisation:
@@ -74,17 +78,10 @@ void gestionEvenement(EvenementGfx evenement)
 			
 			effaceFenetre (255, 255, 255);
 
-			AffMenu (EtatMenu, SelecBouton);
-			
-			if (image != NULL)
-			{
-				ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
-			}
-			
-			else
-			{
-				printf("the picture can't be print\n");
-			}
+			AffMenu (EtatMenu, SelecBouton, t);
+			t = IniBouton ();
+			lisTexteBouton(&t); 
+			demandeTemporisation(2);
 			break;
 			
 		case Clavier:
@@ -132,6 +129,8 @@ void gestionEvenement(EvenementGfx evenement)
 			if (etatBoutonSouris() == GaucheAppuye)
 			{
 				printf("Bouton gauche appuye en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
+				EncadrementBouton (&SelecBouton);
+				ClicOk (&EtatMenu, SelecBouton);
 			}
 			else if (etatBoutonSouris() == GaucheRelache)
 			{
