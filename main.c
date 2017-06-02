@@ -36,14 +36,19 @@ int main(int argc, char **argv)
 	{
 		fprintf(stderr, "eror, can't read stack information\n");
 	}
-	initialiseGfx(argc, argv);
+	if (result == 0)
+	{
+		initialiseGfx(argc, argv);
+		prepareFenetreGraphique("Analyseur de Demarche", LargeurFenetre, HauteurFenetre);
 	
-
-	prepareFenetreGraphique("Analyseur de Demarche", LargeurFenetre, HauteurFenetre);
-	
-	/* Lance la boucle qui aiguille les evenements sur la fonction gestionEvenement ci-apres,
+		/* Lance la boucle qui aiguille les evenements sur la fonction gestionEvenement ci-apres,
 		qui elle-meme utilise fonctionAffichage ci-dessous */
-	lanceBoucleEvenements();
+		lanceBoucleEvenements();
+	}
+	else
+	{
+		fprintf(stderr, "eror, insufficen systhem memory\n");
+	}
 	
 	return 0;
 }
