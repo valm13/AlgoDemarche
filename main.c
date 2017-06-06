@@ -21,7 +21,7 @@ void gestionEvenement(EvenementGfx evenement);
 
 int main(int argc, char **argv)
 {
-	const rlim_t StackSize = sizeof(pixelhsv) * LARGEUR * HAUTEUR;
+	const rlim_t StackSize = sizeof(pixelhsv) * LARGEUR * HAUTEUR * 2;
 	struct rlimit rl;
 	int result;
 
