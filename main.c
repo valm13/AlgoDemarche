@@ -3,9 +3,9 @@
 #include <math.h> 
 #include <string.h>
 #include <sys/resource.h>
-#include "GfxLib.h"
-#include "BmpLib.h"
-#include "ESLib.h"
+#include "libISEN/GfxLib.h"
+#include "libISEN/BmpLib.h"
+#include "libISEN/ESLib.h"
 #include "Affichage.h"
 #include "analyse.h"
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		fprintf(stderr, "eror, can't read stack information\n");
+		fprintf(stderr, "error, can't read stack information\n");
 	}
 	if (result == 0)
 	{
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		fprintf(stderr, "eror, insufficen systhem memory\n");
+		fprintf(stderr, "error, insufficen system memory\n");
 	}
 	
 	return 0;
@@ -61,7 +61,9 @@ void gestionEvenement(EvenementGfx evenement)
 	static int SelecBouton = 0;
 	static bool pleinEcran = false;
 	static DonneesImageRGB *image = NULL;
+	static DonneesImageRGB imageretour;
 	static char nomImage[11];
+	static tabpixel tp;
 	switch (evenement)
 	{
 		case Initialisation:
@@ -72,7 +74,14 @@ void gestionEvenement(EvenementGfx evenement)
 			chargeImage(nomImage,&image);
 			printf("Image chargée\n");
 			printf("image->largeurImage = %d\n",image->largeurImage);
-			rgbToHsv(image);
+			tp=rgbToHsv(image);
+			printf("Transformation HSV : FAIT\n");
+			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char));
+			//~ printf("Malloc image retour fait\n");
+			//~ imageretour.hauteurImage = image->hauteurImage;
+			//~ imageretour.largeurImage = image->largeurImage;
+			//~ identifieColor(tp,&imageretour);
+			//~ ecrisBMPRGB_Dans(&imageretour,"pic001CONVERT.bmp");
 			break;
 		
 		case Temporisation:

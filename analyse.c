@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include "BmpLib.h"
+#include "libISEN/BmpLib.h"
 #include "analyse.h"
 #include "toolbox.h"
+
 
 void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image grâce au nom de celle-ci
 {
@@ -12,7 +13,7 @@ void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image 
 	}
 }
 
-void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
+tabpixel rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 {
 	char bleu,vert,rouge;
 	int h,s,v;
@@ -21,6 +22,7 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 	determ det;
 	for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
 	{
+		
 		for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
 		{
 			bleu=img->donneesRGB[i * img->largeurImage * 3 + j * 3];
@@ -40,6 +42,7 @@ void rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 			tp.p[i][j].v=v;
 		}
 	}
+	return tp;
 }
 
 void determineMaxColor(char bleu,char vert,char rouge,determ *det)
@@ -125,4 +128,41 @@ int calculH(determ det,char r,char g,char b)
 	}
 	else
 	return -1;
+}
+
+
+
+
+int ChangePixCouleurImg(pixelhsv p)
+{
+	if (p.h > 80 && p.h < 120) // Le pixel est bien vert !
+	return 1; // On va le mettre en blanc
+	else 
+	return 0; // On va le mettre en noir
+}
+
+void identifieColor(tabpixel tp,DonneesImageRGB *img)
+{
+		int colorchange;
+		for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
+		{
+			
+			for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
+			{
+				colorchange=ChangePixCouleurImg(tp.p[i][j]);
+				if (colorchange == 1)
+				{
+					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=255;
+					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=255;
+					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=255;
+				}
+				else
+				{
+					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=0;
+					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=0;
+					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=0;
+				}
+			}
+			
+		}
 }

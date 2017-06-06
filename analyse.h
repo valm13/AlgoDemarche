@@ -21,7 +21,7 @@ typedef struct determ{
 
 
 
-void rgbToHsv(DonneesImageRGB *img);
+tabpixel rgbToHsv(DonneesImageRGB *img);
 
 void chargeImage(char nomFichier[11],DonneesImageRGB **img);
 
@@ -32,6 +32,5 @@ int calculS(determ det);
 int calculH(determ det,char r,char g,char b);
 
 
-//Fonctions Inutiles :
-void test(DonneesImageRGB *img);
-void test2(DonneesImageRGB *img);
+int ChangePixCouleurImg(pixelhsv p);
+void identifieColor(tabpixel tp,DonneesImageRGB *img);
