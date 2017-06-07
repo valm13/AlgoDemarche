@@ -2,11 +2,11 @@
 #define HAUTEUR 1080	// Hauteur de l'image
 
 typedef struct pixelhsv{
-	int h,s,v; // Repere HSV	H: Hue	S: Saturation	V: Value
+	int h; double s,v; // Repere HSV	H: Hue	S: Saturation	V: Value
 }pixelhsv;
 
 typedef struct tabpixel{
-	pixelhsv p[LARGEUR][HAUTEUR];
+	pixelhsv p[HAUTEUR][LARGEUR];
 }tabpixel;
 
 typedef struct infocoul{
@@ -28,9 +28,9 @@ void chargeImage(char nomFichier[11],DonneesImageRGB **img);
 void determineMaxColor(char bleu,char vert,char rouge,determ *det);
 void determineMinColor(char bleu,char vert,char rouge,determ *det);
 
-int calculS(determ det);
+double calculS(determ det);
 int calculH(determ det,char r,char g,char b);
 
 
-int ChangePixCouleurImg(pixelhsv p);
+int ChangePixCouleurImg(pixelhsv p, int targuet, int offset);
 void identifieColor(tabpixel tp,DonneesImageRGB *img);

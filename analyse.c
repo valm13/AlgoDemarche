@@ -3,6 +3,75 @@
 #include "analyse.h"
 #include "toolbox.h"
 
+typedef struct {
+    double r;       // a fraction between 0 and 1
+    double g;       // a fraction between 0 and 1
+    double b;       // a fraction between 0 and 1
+} rgb;
+
+typedef struct {
+    double h;       // angle in degrees
+    double s;       // a fraction between 0 and 1
+    double v;       // a fraction between 0 and 1
+} hsv;
+
+rgb hsv2rgb(hsv in)
+{
+    double      hh, p, q, t, ff;
+    long        i;
+    rgb         out;
+
+    if(in.s <= 0.0) {       // < is bogus, just shuts up warnings
+        out.r = in.v;
+        out.g = in.v;
+        out.b = in.v;
+        return out;
+    }
+    hh = in.h;
+    if(hh >= 360.0) hh = 0.0;
+    hh /= 60.0;
+    i = (long)hh;
+    ff = hh - i;
+    p = in.v * (1.0 - in.s);
+    q = in.v * (1.0 - (in.s * ff));
+    t = in.v * (1.0 - (in.s * (1.0 - ff)));
+
+    switch(i) {
+    case 0:
+        out.r = in.v;
+        out.g = t;
+        out.b = p;
+        break;
+    case 1:
+        out.r = q;
+        out.g = in.v;
+        out.b = p;
+        break;
+    case 2:
+        out.r = p;
+        out.g = in.v;
+        out.b = t;
+        break;
+
+    case 3:
+        out.r = p;
+        out.g = q;
+        out.b = in.v;
+        break;
+    case 4:
+        out.r = t;
+        out.g = p;
+        out.b = in.v;
+        break;
+    case 5:
+    default:
+        out.r = in.v;
+        out.g = p;
+        out.b = q;
+        break;
+    }
+    return out;
+}
 
 void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image grâce au nom de celle-ci
 {
@@ -20,12 +89,16 @@ tabpixel rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 	tabpixel tp; // Adapter la taille du tableau en dynamique
 //	int nbpixel = img->largeurImage*img->hauteurImage;
 	determ det;
+	if(img->hauteurImage != HAUTEUR || img->largeurImage != LARGEUR)
+	{
+		fprintf(stderr, "les collone ou/et les lignes des deux images ne correspondent pas");
+	}
 	for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
 	{
 		
 		for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
 		{
-			bleu=img->donneesRGB[i * img->largeurImage * 3 + j * 3];
+			bleu=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 0];
 			vert=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1];
 			rouge=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2];
 			
@@ -37,10 +110,13 @@ tabpixel rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
 			s=calculS(det);
 			v=det.max.v;
 			
+			printf("%d ", h);
+
 			tp.p[i][j].h=h;	// Rentre les valeurs de H S et V dans un tableau de pixel(une image)
 			tp.p[i][j].s=s;
 			tp.p[i][j].v=v;
 		}
+		printf("\n ");
 	}
 	return tp;
 }
@@ -101,12 +177,12 @@ void determineMinColor(char bleu,char vert,char rouge,determ *det)
 	//~ }
 //~ }
 
-int calculS(determ det)
+double calculS(determ det)
 {
 	if(det.max.v==0)
 	return 0;
 	else
-	return 1-(det.min.v/det.max.v);
+	return 1-((double)det.min.v/det.max.v);
 
 }
 
@@ -116,15 +192,15 @@ int calculH(determ det,char r,char g,char b)
 	return 0;
 	else if(det.max.c==3) // r
 	{
-		return (60*((g-b)/(det.max.v-det.min.v))+360)%360;
+		return (int)(60*((float)(g-b)/(det.max.v-det.min.v))+360)%360;
 	}
 	else if(det.max.c==2) // v
 	{
-		return 60*((b-r)/(det.max.v-det.min.v))+120;
+		return 60*((float)(b-r)/(det.max.v-det.min.v))+120;
 	}
 	else if(det.max.c==1) // b
 	{
-		return 60*((r-g)/(det.max.v-det.min.v))+240;
+		return 60*((float)(r-g)/(det.max.v-det.min.v))+240;
 	}
 	else
 	return -1;
@@ -133,9 +209,9 @@ int calculH(determ det,char r,char g,char b)
 
 
 
-int ChangePixCouleurImg(pixelhsv p)
+int ChangePixCouleurImg(pixelhsv p, int targuet, int offset)
 {
-	if (p.h > 80 && p.h < 120) // Le pixel est bien vert !
+	if ((p.h + 180)%360 > targuet - offset && (p.h + 180)%360 < targuet + offset) // Le pixel est bien vert !
 	return 1; // On va le mettre en blanc
 	else 
 	return 0; // On va le mettre en noir
@@ -144,24 +220,42 @@ int ChangePixCouleurImg(pixelhsv p)
 void identifieColor(tabpixel tp,DonneesImageRGB *img)
 {
 		int colorchange;
+
+		hsv pix_hsv;
+		rgb pix_rgb;
+		if(img->hauteurImage != HAUTEUR || img->largeurImage != LARGEUR)
+		{
+			fprintf(stderr, "les collone ou/et les lignes des deux images ne correspondent pas");
+		}
 		for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
 		{
-			
+//			printf("\n");
 			for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
 			{
-				colorchange=ChangePixCouleurImg(tp.p[i][j]);
-				if (colorchange == 1)
-				{
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=255;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=255;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=255;
-				}
-				else
-				{
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=0;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=0;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=0;
-				}
+				pix_hsv.h = (i+j) % 360;
+				pix_hsv.s = ((double)( i )) / (HAUTEUR);
+				pix_hsv.v = 1;
+
+				pix_hsv.h = (tp.p[i][j].h + 180)%360;
+				pix_hsv.s = 1; //tp.p[i][j].s;
+				pix_hsv.v = 1; //((double)tp.p[i][j].v);
+				pix_rgb = hsv2rgb(pix_hsv);
+				img->donneesRGB[i * img->largeurImage * 3 + j * 3] = pix_rgb.b * 255;
+				img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1] = pix_rgb.g * 255;
+				img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2] = pix_rgb.r * 255;
+				//				colorchange=ChangePixCouleurImg(tp.p[i][j], 290, 5);
+//				if (colorchange == 1)
+//				{
+//					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=255;
+//					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=255;
+//					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=255;
+//				}
+//				else
+//				{
+//					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=0;
+//					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=0;
+//					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=0;
+//				}
 			}
 			
 		}

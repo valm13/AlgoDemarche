@@ -68,7 +68,7 @@ void gestionEvenement(EvenementGfx evenement)
 	{
 		case Initialisation:
 			demandeTemporisation(20);
-			strcpy(nomImage,"Pictures/pic001.bmp");
+			strcpy(nomImage,"Pictures/pic002.bmp");
 			printf("\nChargement de l'image\n");
 			//image = lisBMPRGB(nomImage);
 			chargeImage(nomImage,&image);
@@ -76,12 +76,16 @@ void gestionEvenement(EvenementGfx evenement)
 			printf("image->largeurImage = %d\n",image->largeurImage);
 			tp=rgbToHsv(image);
 			printf("Transformation HSV : FAIT\n");
-			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char));
-			//~ printf("Malloc image retour fait\n");
-			//~ imageretour.hauteurImage = image->hauteurImage;
-			//~ imageretour.largeurImage = image->largeurImage;
-			//~ identifieColor(tp,&imageretour);
-			//~ ecrisBMPRGB_Dans(&imageretour,"pic001CONVERT.bmp");
+			imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char) * 3);
+			if (imageretour.donneesRGB == NULL)
+			{
+				fprintf(stderr, "malloc error");
+			}
+			printf("Malloc image retour fait\n");
+			imageretour.hauteurImage = image->hauteurImage;
+			imageretour.largeurImage = image->largeurImage;
+			identifieColor(tp,&imageretour);
+			ecrisBMPRGB_Dans(&imageretour,"Pictures/pic002CONVERT.bmp");
 			break;
 		
 		case Temporisation:
@@ -96,7 +100,7 @@ void gestionEvenement(EvenementGfx evenement)
 			
 			if (image != NULL)
 			{
-				ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
+				ecrisImage(0, 0, imageretour.largeurImage, imageretour.hauteurImage, imageretour.donneesRGB);
 			}
 			
 			else
@@ -112,7 +116,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				case 'Q': /* Pour sortir quelque peu proprement du programme */
 				case 'q':
-					libereDonneesImageRGB(&image);
+//					libereDonneesImageRGB(&image);
 					termineBoucleEvenements();
 					break;
 
