@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "libISEN/BmpLib.h"
+#include "matrice.h"
 #include "analyse.h"
 #include "toolbox.h"
+
 
 
 void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image grâce au nom de celle-ci
@@ -13,59 +15,28 @@ void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image 
 	}
 }
 
-tabpixel rgbToHsv(DonneesImageRGB *img) //Pour 1 photo
+image rgbToHsv(troimat t) //Pour 1 photo
 {
-	char bleu,vert,rouge;
-	int h,s,v;
-	tabpixel tp; // Adapter la taille du tableau en dynamique
-//	int nbpixel = img->largeurImage*img->hauteurImage;
+	image tp; //tableau de h s v
 	determ det;
-	for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
+
+	for(int i = 0; i < HAUTEUR; i++)
 	{
 		
-		for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
+		for(int j = 0; j < LARGEUR; j++)
 		{
-			bleu=img->donneesRGB[i * img->largeurImage * 3 + j * 3];
-			vert=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1];
-			rouge=img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2];
-			
-			determineMinColor(bleu,vert,rouge,&det);	// Determine le max et le min pour effectuer les calculs de H S et V
-			determineMaxColor(bleu,vert,rouge,&det);
-			// printf("det.min.c = %d\n",det.min.c);
-			// printf("det.max.c = %d\n",det.max.c);
-			h=calculH(det,rouge,vert,bleu);
-			s=calculS(det);
-			v=det.max.v;
-			
-			tp.p[i][j].h=h;	// Rentre les valeurs de H S et V dans un tableau de pixel(une image)
-			tp.p[i][j].s=s;
-			tp.p[i][j].v=v;
+			determineMinColor(t.b[i][j],t.v[i][j],t.r[i][j],&det);	// Determine le max et le min pour effectuer les calculs de H S et V
+			determineMaxColor(t.b[i][j],t.v[i][j],t.r[i][j],&det);
+
+			tp.h[i][j]=calculH(det,t.r[i][j],t.v[i][j],t.b[i][j]); // Rentre les valeurs de H S et V dans un tableau de pixel(une image)
+			tp.s[i][j]=calculS(det);
+			tp.v[i][j]=(det.max.v*100)/255;		
 		}
 	}
 	return tp;
 }
 
-void determineMaxColor(char bleu,char vert,char rouge,determ *det)
-{
-
-	if(bleu>=vert && bleu >=rouge)
-	{
-		det->max.c=1;
-		det->max.v=bleu;
-	}
-	else if(vert>=bleu && vert>=rouge)
-	{
-		det->max.c=2;
-		det->max.v=vert;
-	}
-	else if(rouge>=vert && rouge >=bleu)
-	{
-		det->max.c=3;
-		det->max.v=rouge;
-	}
-}
-
-void determineMinColor(char bleu,char vert,char rouge,determ *det)
+void determineMinColor(int bleu,int vert,int rouge,determ *det)
 {
 
 	if(bleu<=vert && bleu <=rouge)
@@ -85,21 +56,25 @@ void determineMinColor(char bleu,char vert,char rouge,determ *det)
 	}
 }
 
+void determineMaxColor(int bleu,int vert,int rouge,determ *det)
+{
 
-//~ void test(DonneesImageRGB *img) // Affichage de toutes les données de l'image
-//~ {
-	//~ for(int i=0;i<421500;i++) //421500 = NbPixel * 3 (RVB)
-	//~ {
-		//~ printf("%d\n",img->donneesRGB[i]);
-	//~ }
-//~ }
-//~ void test2(DonneesImageRGB *img) // Filtre Rouge, Vert ou Bleu #PourleFun
-//~ {
-	//~ for(int i=2;i<421500;i=i+3) //421500 = NbPixel * 3 (RVB)
-	//~ {
-		//~ img->donneesRGB[i]=255;
-	//~ }
-//~ }
+	if(bleu>=vert && bleu >=rouge)
+	{
+		det->max.c=1;
+		det->max.v=bleu;
+	}
+	else if(vert>=bleu && vert>=rouge)
+	{
+		det->max.c=2;
+		det->max.v=vert;
+	}
+	else if(rouge>=vert && rouge >=bleu)
+	{
+		det->max.c=3;
+		det->max.v=rouge;
+	}
+}
 
 int calculS(determ det)
 {
@@ -110,7 +85,7 @@ int calculS(determ det)
 
 }
 
-int calculH(determ det,char r,char g,char b)
+int calculH(determ det,int r,int g,int b)
 {
 	if(det.max.v==det.min.v)
 	return 0;
@@ -133,36 +108,87 @@ int calculH(determ det,char r,char g,char b)
 
 
 
-int ChangePixCouleurImg(pixelhsv p)
+void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
-	if (p.h > 80 && p.h < 120) // Le pixel est bien vert !
-	return 1; // On va le mettre en blanc
-	else 
-	return 0; // On va le mettre en noir
+	int offset = 10;
+	int target = 0;
+	for(int i = 0; i < HAUTEUR; i++)
+		{
+
+			for(int j = 0; j < LARGEUR; j++)
+			{
+				if((t.h[i][j] < target + offset && t.h[i][j] > target - offset && t.s[i][j] > 0))
+				{
+				color[i][j]= 0; // On va le mettre en blanc
+				printf("Rouge\n");
+				}
+				else 
+				{
+				color[i][j]= -1; // On va le mettre en noir
+				//~ printf("autre\n");
+				}
+			}
+		}	
 }
 
-void identifieColor(tabpixel tp,DonneesImageRGB *img)
+jointure identifieColor(image tp,DonneesImageRGB *img)
 {
-		int colorchange;
-		for(int i = 0; i < MIN( img->hauteurImage, HAUTEUR); i++)
+		jointure joint; // Position de chaques point appartenant à la couleur de certaines jointures
+		int color[HAUTEUR][LARGEUR];	// Couleur détectée
+		int a=0;	// Variable d'incrémentation pour les position des points
+		initialiseTabPoint(&joint); // Initialise les cases du tableau à 0
+		printf("hauteurimage=%d\n",img->hauteurImage);
+		ChangePixCouleurImg(tp,color);
+		for(int i = 0; i < HAUTEUR; i++)
 		{
-			
-			for(int j = 0; j < MIN(img->largeurImage, LARGEUR); j++)
+			for(int j = 0; j < LARGEUR; j++)
 			{
-				colorchange=ChangePixCouleurImg(tp.p[i][j]);
-				if (colorchange == 1)
+				if (color[i][j] == 0) // Correspond à la couleur verte
 				{
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=255;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=255;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=255;
+					joint.j[0].position[a].y=i;	// Ce 1 correspond aussi à la couleur Rouge	
+					joint.j[0].position[a].x=j;
+					a++;
+					joint.j[0].nb++;
 				}
-				else
+				else if (color[i][j] == -1) 
 				{
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3]=0;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 1]=0;
-					img->donneesRGB[i * img->largeurImage * 3 + j * 3 + 2]=0;
+					
 				}
 			}
 			
+			
 		}
+		
+		return joint;
+}
+
+void initialiseTabPoint(jointure *t)
+{
+	for(int i=0;i<JOINT;i++)
+	{
+		t->j[i].nb=0;
+		for(int j=0;j<MAXPIXJOINT;j++)
+		{
+			t->j[i].position[j].x=0;
+			t->j[i].position[j].y=0;
+		}
+	}
+}
+
+void sommePointJoint(jointure *t) // Trouve les coordonnées du centre des cercle (jointure)
+{
+	int i;
+	int sommation_x=0;
+	int sommation_y=0;
+	
+	for(i=0;i<t->j[0].nb;i++)
+	{
+		sommation_x+=t->j[0].position[i].x;
+		sommation_y+=t->j[0].position[i].y;
+	}
+	if(t->j[0].nb != 0)
+	{
+		t->j[0].centre.x=sommation_x/t->j[0].nb;
+		t->j[0].centre.y=sommation_y/t->j[0].nb;
+	}
 }

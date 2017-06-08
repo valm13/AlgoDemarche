@@ -1,36 +1,51 @@
-#define LARGEUR 1920	// Largeur de l'image
-#define HAUTEUR 1080	// Hauteur de l'image
+#ifndef ANALYSE_H
+#define ANALYSE_H
+#include "matrice.h"
+#define JOINT 5	// Jointures des articulation Main Coude Pied Epaule Genoux0
+#define MAXPIXJOINT 3000	// Jointures des articulation
 
-typedef struct pixelhsv{
-	int h,s,v; // Repere HSV	H: Hue	S: Saturation	V: Value
-}pixelhsv;
-
-typedef struct tabpixel{
-	pixelhsv p[LARGEUR][HAUTEUR];
-}tabpixel;
+typedef struct image{
+	int h[HAUTEUR][LARGEUR],s[HAUTEUR][LARGEUR],v[HAUTEUR][LARGEUR]; // Repere HSV	H: Hue	S: Saturation	V: Value
+}image;
 
 typedef struct infocoul{
 	int c; // 1=Bleu	2=Vert	3=Rouge
-	char v; // Valeur
+	int v; // Valeur
 }infocoul;
 
 typedef struct determ{
 	infocoul min,max; // Valeur Min et Max + Info sur la couleur correspondante
 }determ;
 
+typedef struct pos{
+	int x,y;
+}pos;
+typedef struct info{
+	pos position[MAXPIXJOINT]; // y puis x
+	int nb;
+	pos centre;
+}info;
+
+typedef struct jointure{
+	info j[JOINT];
+	
+}jointure;
 
 
-
-tabpixel rgbToHsv(DonneesImageRGB *img);
+image rgbToHsv(troimat t);
 
 void chargeImage(char nomFichier[11],DonneesImageRGB **img);
 
-void determineMaxColor(char bleu,char vert,char rouge,determ *det);
-void determineMinColor(char bleu,char vert,char rouge,determ *det);
+void determineMaxColor(int bleu,int vert,int rouge,determ *det);
+void determineMinColor(int bleu,int vert,int rouge,determ *det);
 
 int calculS(determ det);
-int calculH(determ det,char r,char g,char b);
+int calculH(determ det,int r,int g,int b);
 
 
-int ChangePixCouleurImg(pixelhsv p);
-void identifieColor(tabpixel tp,DonneesImageRGB *img);
+void ChangePixCouleurImg(image p,int color[HAUTEUR][LARGEUR]);
+jointure identifieColor(image tp,DonneesImageRGB *img);
+void initialiseTabPoint(jointure *t);
+void sommePointJoint(jointure *t);
+
+#endif

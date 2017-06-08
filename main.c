@@ -7,7 +7,9 @@
 #include "libISEN/BmpLib.h"
 #include "libISEN/ESLib.h"
 #include "Affichage.h"
+#include "matrice.h"
 #include "analyse.h"
+
 
 // Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
@@ -21,7 +23,7 @@ void gestionEvenement(EvenementGfx evenement);
 
 int main(int argc, char **argv)
 {
-	const rlim_t StackSize = sizeof(pixelhsv) * LARGEUR * HAUTEUR * 2;
+	const rlim_t StackSize = sizeof(image) * LARGEUR * HAUTEUR * 2;
 	struct rlimit rl;
 	int result;
 
@@ -57,30 +59,42 @@ int main(int argc, char **argv)
 des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
+	static image tp;
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
 	static bool pleinEcran = false;
 	static DonneesImageRGB *image = NULL;
-	static DonneesImageRGB imageretour;
+	//~ static DonneesImageRGB imageretour;
 	static char nomImage[11];
-	static tabpixel tp;
+	static troimat mat;
+	static jointure joint;
 	switch (evenement)
 	{
 		case Initialisation:
 			demandeTemporisation(20);
-			strcpy(nomImage,"Pictures/pic001.bmp");
+			strcpy(nomImage,"TestPic/test.bmp"); 
 			printf("\nChargement de l'image\n");
-			//image = lisBMPRGB(nomImage);
-			chargeImage(nomImage,&image);
+			chargeImage(nomImage,&image); //WORK
+			
 			printf("Image chargée\n");
 			printf("image->largeurImage = %d\n",image->largeurImage);
-			tp=rgbToHsv(image);
-			printf("Transformation HSV : FAIT\n");
-			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char));
+			
+			mat=cree3matrices(image);
+			printf("Matrice crée : Fait !\n");
+			
+			tp=rgbToHsv(mat);
+			printf("Transformation RGB->HSV : Fait !\n");
+			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char) * 3);
 			//~ printf("Malloc image retour fait\n");
 			//~ imageretour.hauteurImage = image->hauteurImage;
 			//~ imageretour.largeurImage = image->largeurImage;
-			//~ identifieColor(tp,&imageretour);
+			joint=identifieColor(tp,image);
+			printf("joint.j[0].nb = %d\n",joint.j[0].nb);
+			//~ for(int i = 0;i < joint.j[0].nb;i++)
+			//~ printf("x = %d\ny = %d\n",joint.j[0].position[i].x,joint.j[0].position[i].y);
+			sommePointJoint(&joint);
+			
+			printf("\nCentre : \nX = %d\nY = %d\n",joint.j[0].centre.x,joint.j[0].centre.y);
 			//~ ecrisBMPRGB_Dans(&imageretour,"pic001CONVERT.bmp");
 			break;
 		
@@ -103,6 +117,8 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				printf("the picture can't be print\n");
 			}
+			couleurCourante(0,0,0);
+			point(joint.j[0].centre.x,joint.j[0].centre.y);
 			break;
 			
 		case Clavier:
@@ -112,7 +128,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				case 'Q': /* Pour sortir quelque peu proprement du programme */
 				case 'q':
-					libereDonneesImageRGB(&image);
+					//libereDonneesImageRGB(&image);
 					termineBoucleEvenements();
 					break;
 
