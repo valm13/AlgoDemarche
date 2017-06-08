@@ -10,7 +10,6 @@
 #include "matrice.h"
 #include "analyse.h"
 
-
 // Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
 #define HauteurFenetre 600
@@ -85,6 +84,10 @@ void gestionEvenement(EvenementGfx evenement)
 			tp=rgbToHsv(mat);
 			printf("Transformation RGB->HSV : Fait !\n");
 			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char) * 3);
+			if (imageretour.donneesRGB == NULL)
+			{
+				fprintf(stderr, "malloc error");
+			}
 			//~ printf("Malloc image retour fait\n");
 			//~ imageretour.hauteurImage = image->hauteurImage;
 			//~ imageretour.largeurImage = image->largeurImage;
@@ -128,7 +131,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				case 'Q': /* Pour sortir quelque peu proprement du programme */
 				case 'q':
-					//libereDonneesImageRGB(&image);
+					libereDonneesImageRGB(&image);
 					termineBoucleEvenements();
 					break;
 

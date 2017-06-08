@@ -5,7 +5,6 @@
 #include "toolbox.h"
 
 
-
 void chargeImage(char nomFichier[11],DonneesImageRGB **img)	// Charge une image grâce au nom de celle-ci
 {
 	*img = lisBMPRGB(nomFichier);
