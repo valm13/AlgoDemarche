@@ -84,10 +84,10 @@ void gestionEvenement(EvenementGfx evenement)
 			tp=rgbToHsv(mat);
 			printf("Transformation RGB->HSV : Fait !\n");
 			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char) * 3);
-			if (imageretour.donneesRGB == NULL)
-			{
-				fprintf(stderr, "malloc error");
-			}
+			//~ if (imageretour.donneesRGB == NULL)
+			//~ {
+				//~ fprintf(stderr, "malloc error");
+			//~ }
 			//~ printf("Malloc image retour fait\n");
 			//~ imageretour.hauteurImage = image->hauteurImage;
 			//~ imageretour.largeurImage = image->largeurImage;
