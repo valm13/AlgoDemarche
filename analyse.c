@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "libISEN/BmpLib.h"
 #include "matrice.h"
 #include "analyse.h"
@@ -32,6 +33,13 @@ image rgbToHsv(troimat t) //Pour 1 photo
 			tp.v[i][j]=(det.max.v*100)/255;		
 		}
 	}
+	//~ for(int k=0;k<600;k++)
+			//~ {
+				//~ printf("\ntp.h[%d][608]= %d\n",k,tp.h[k][608]);
+				//~ printf("tp.s[%d][608]= %d\n",k,tp.s[k][608]);
+				//~ printf("tp.v[%d][608]= %d\n",k,tp.v[k][608]);
+				
+			//~ }
 	return tp;
 }
 
@@ -86,19 +94,26 @@ int calculS(determ det)
 
 int calculH(determ det,int r,int g,int b)
 {
+	int offset=10;
+	if(abs(r-g)<=offset && abs(r-b)<=offset &&  abs(g-b)<=offset)
+	{
+		return -100;
+	}
 	if(det.max.v==det.min.v)
-	return 0;
+	{
+		return 0;
+	}
 	else if(det.max.c==3) // r
 	{
-		return (60*((g-b)/(det.max.v-det.min.v))+360)%360;
+		return (int)(60*((float)(g-b)/(det.max.v-det.min.v))+360)%360;
 	}
 	else if(det.max.c==2) // v
 	{
-		return 60*((b-r)/(det.max.v-det.min.v))+120;
+		return 60*((float)(b-r)/(det.max.v-det.min.v))+120;
 	}
 	else if(det.max.c==1) // b
 	{
-		return 60*((r-g)/(det.max.v-det.min.v))+240;
+		return 60*((float)(r-g)/(det.max.v-det.min.v))+240;
 	}
 	else
 	return -1;
@@ -109,17 +124,18 @@ int calculH(determ det,int r,int g,int b)
 
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
-	int offset = 10;
-	int target = 0;
+	int offset = 1;
+	int target = 180;
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
 			for(int j = 0; j < LARGEUR; j++)
 			{
-				if((t.h[i][j] < target + offset && t.h[i][j] > target - offset && t.s[i][j] > 0))
+				//~ if((t.h[i][j] < target + offset && t.h[i][j] > target - offset) && t.s[i][j] > 20)
+				if((t.h[i][j] < target + offset && t.h[i][j] > target - offset ) /*&& t.s[i][j] == 100 && t.v[i][j] == 100 */)
 				{
 				color[i][j]= 0; // On va le mettre en blanc
-				printf("Rouge\n");
+				//~ printf("Rouge\n");
 				}
 				else 
 				{

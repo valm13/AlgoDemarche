@@ -1,8 +1,8 @@
 #ifndef ANALYSE_H
 #define ANALYSE_H
 #include "matrice.h"
-#define JOINT 5	// Jointures des articulation Main Coude Pied Epaule Genoux0
-#define MAXPIXJOINT 1000000	// Jointures des articulation
+#define JOINT 5	// Jointures des articulation Main Coude Pied Epaule Genoux
+#define MAXPIXJOINT 480000	// Jointures des articulation
 
 typedef struct image{
 	int h[HAUTEUR][LARGEUR],s[HAUTEUR][LARGEUR],v[HAUTEUR][LARGEUR]; // Repere HSV	H: Hue	S: Saturation	V: Value

@@ -62,7 +62,7 @@ void gestionEvenement(EvenementGfx evenement)
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
 	static bool pleinEcran = false;
-	static DonneesImageRGB *image = NULL;
+	static DonneesImageRGB *img = NULL;
 	//~ static DonneesImageRGB imageretour;
 	static char nomImage[11];
 	static troimat mat;
@@ -73,13 +73,22 @@ void gestionEvenement(EvenementGfx evenement)
 			demandeTemporisation(20);
 			strcpy(nomImage,"TestPic/test.bmp"); 
 			printf("\nChargement de l'image\n");
-			chargeImage(nomImage,&image); //WORK
+			chargeImage(nomImage,&img); //WORK
 			
 			printf("Image chargée\n");
-			printf("image->largeurImage = %d\n",image->largeurImage);
+			printf("image->largeurImage = %d\n",img->largeurImage);
 			
-			mat=cree3matrices(image);
+			mat=cree3matrices(img);
 			printf("Matrice crée : Fait !\n");
+			
+			
+			//~ for(int k=0;k<600;k++)
+			//~ {
+				//~ printf("\nmat.r[50][%d]= %d\n",k,mat.r[k][608]);
+				//~ printf("mat.g[50][%d]= %d\n",k,mat.v[k][608]); //[y][x]
+				//~ printf("mat.b[50][%d]= %d\n",k,mat.b[k][608]);
+			//~ }
+			
 			
 			tp=rgbToHsv(mat);
 			printf("Transformation RGB->HSV : Fait !\n");
@@ -91,7 +100,7 @@ void gestionEvenement(EvenementGfx evenement)
 			//~ printf("Malloc image retour fait\n");
 			//~ imageretour.hauteurImage = image->hauteurImage;
 			//~ imageretour.largeurImage = image->largeurImage;
-			joint=identifieColor(tp,image);
+			joint=identifieColor(tp,img);
 			printf("joint.j[0].nb = %d\n",joint.j[0].nb);
 			//~ for(int i = 0;i < joint.j[0].nb;i++)
 			//~ printf("x = %d\ny = %d\n",joint.j[0].position[i].x,joint.j[0].position[i].y);
@@ -111,9 +120,9 @@ void gestionEvenement(EvenementGfx evenement)
 
 			AffMenu (EtatMenu, SelecBouton);
 			
-			if (image != NULL)
+			if (img != NULL)
 			{
-				ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
+				ecrisImage(0, 0, img->largeurImage, img->hauteurImage, img->donneesRGB);
 			}
 			
 			else
@@ -121,8 +130,11 @@ void gestionEvenement(EvenementGfx evenement)
 				printf("the picture can't be print\n");
 			}
 			couleurCourante(0,0,0);
+			//~ for(int b=0;b<joint.j[0].nb;b++)
+			//~ point(joint.j[0].position[b].x,joint.j[0].position[b].y);
+			//~ break;
+			//~ couleurCourante(255,0,255);
 			point(joint.j[0].centre.x,joint.j[0].centre.y);
-			break;
 			
 		case Clavier:
 			printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
@@ -131,7 +143,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				case 'Q': /* Pour sortir quelque peu proprement du programme */
 				case 'q':
-					libereDonneesImageRGB(&image);
+					libereDonneesImageRGB(&img);
 					termineBoucleEvenements();
 					break;
 
