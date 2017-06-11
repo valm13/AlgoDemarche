@@ -125,7 +125,7 @@ int calculH(determ det,int r,int g,int b)
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
 	int offset = 1;
-	int target = 180;
+	int target = 180; // Faire un tableau de target pour chaques jointures
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
