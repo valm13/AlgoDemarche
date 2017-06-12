@@ -33,13 +33,6 @@ image rgbToHsv(troimat t) //Pour 1 photo
 			tp.v[i][j]=(det.max.v*100)/255;		
 		}
 	}
-	//~ for(int k=0;k<600;k++)
-			//~ {
-				//~ printf("\ntp.h[%d][608]= %d\n",k,tp.h[k][608]);
-				//~ printf("tp.s[%d][608]= %d\n",k,tp.s[k][608]);
-				//~ printf("tp.v[%d][608]= %d\n",k,tp.v[k][608]);
-				
-			//~ }
 	return tp;
 }
 
@@ -124,88 +117,140 @@ int calculH(determ det,int r,int g,int b)
 
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
-	int offset = 1;
-	int target = 180; // Faire un tableau de target pour chaques jointures
+	int offset = 10;
+	int target[JOINT] = {0,50,120,180,205};
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
 			for(int j = 0; j < LARGEUR; j++)
 			{
-				//~ if((t.h[i][j] < target + offset && t.h[i][j] > target - offset) && t.s[i][j] > 20)
-				if((t.h[i][j] < target + offset && t.h[i][j] > target - offset ) /*&& t.s[i][j] == 100 && t.v[i][j] == 100 */)
+				for(int u=0;u<5;u++)
 				{
-				color[i][j]= 0; // On va le mettre en blanc
-				//~ printf("Rouge\n");
+					color[i][j]= -1; 
+					if(t.h[i][j] < target[u] + offset && t.h[i][j] > target[u] - offset)
+					{
+						printf("u=%d\n",u);
+						color[i][j]= u; // C'est du rouge
+					}
 				}
-				else 
+				if((t.h[i][j] < target[0] + offset && t.h[i][j] > target[0] - offset)) 
 				{
-				color[i][j]= -1; // On va le mettre en noir
+				color[i][j]= 0; // C'est du rouge
+				}
+				//~ else if((t.h[i][j] < target[1] + offset && t.h[i][j] > target[1] - offset))
+				//~ {
+				//~ color[i][j]= 1; // C'est du jaune
+				//~ }
+				//~ else if((t.h[i][j] < target[2] + offset && t.h[i][j] > target[2] - offset))
+				//~ {
+				//~ color[i][j]= 2; // C'est du vert
+				//~ }
+				//~ else if((t.h[i][j] < target[3] + offset && t.h[i][j] > target[3] - offset))
+				//~ {
+				//~ color[i][j]= 3; // C'est du turquoise
+				//~ }
+				//~ else if((t.h[i][j] < target[4] + offset && t.h[i][j] > target[4] - offset))
+				//~ {
+				//~ color[i][j]= 4; // C'est du bleu plus foncé
+				//~ }
+				//~ else 
+				//~ {
+				//~ color[i][j]= -1; // Autres couleurs
 				//~ printf("autre\n");
-				}
+				//~ }
 			}
 		}	
 }
 
-void identifieColor(image tp,jointure joint[NBIMAGE],int z)
+void identifieColor(image tp,jointure pic[NBIMAGE],int z)
 {
 		
 		int color[HAUTEUR][LARGEUR];	// Couleur détectée
 		int a=0;	// Variable d'incrémentation pour les position des points
-		initialiseTabPoint(joint,z); // Initialise les cases du tableau à 0
+		int b=0;
+		int c=0;
+		int d=0;
+		int e=0;
+		initialiseTabPoint(pic,z); // Initialise les cases du tableau à 0
 		ChangePixCouleurImg(tp,color);
 		for(int i = 0; i < HAUTEUR; i++)
 		{
 			for(int j = 0; j < LARGEUR; j++)
 			{
-				
-				
-				if (color[i][j] == 0) // Correspond à la couleur verte
+				switch(color[i][j])
 				{
-					joint[z].j[0].position[a].y=i;	// Ce 1 correspond aussi à la couleur Rouge	
-					joint[z].j[0].position[a].x=j;
+					case 0:
+					pic[z].j[0].position[a].y=i;	// Rouge
+					pic[z].j[0].position[a].x=j;
 					a++;
-					joint[z].j[0].nb++;
-				}
-				else if (color[i][j] == -1) 
-				{
+					pic[z].j[0].nb++;
+					break;
 					
+					case 1:
+					pic[z].j[1].position[a].y=i;	// Rouge
+					pic[z].j[1].position[a].x=j;
+					b++;
+					pic[z].j[1].nb++;
+					break;
+					
+					case 2:
+					pic[z].j[2].position[a].y=i;	// Rouge
+					pic[z].j[2].position[a].x=j;
+					c++;
+					pic[z].j[2].nb++;
+					break;
+					
+					case 3:
+					pic[z].j[3].position[a].y=i;	// Rouge
+					pic[z].j[3].position[a].x=j;
+					d++;
+					pic[z].j[3].nb++;
+					break;
+					
+					case 4:
+					pic[z].j[4].position[a].y=i;	// Rouge
+					pic[z].j[4].position[a].x=j;
+					e++;
+					pic[z].j[4].nb++;
+					break;
 				}
-			}
-			
-			
+			}	
 		}
-		printf("fin\n");
 }
 
-void initialiseTabPoint(jointure t[NBIMAGE],int z)
+void initialiseTabPoint(jointure pic[NBIMAGE],int z)
 {
-	printf("On rentre dans initialisePoiint\n");
 	for(int i=0;i<JOINT;i++)
 	{	
-		t[z].j[i].nb=0;
-		printf("salut %d\n",i);
+		pic[z].j[i].nb=0;
 		for(int j=0;j<MAXPIXJOINT;j++)
 		{
-			t[z].j[i].position[j].x=0;
-			t[z].j[i].position[j].y=0;
+			pic[z].j[i].position[j].x=0;
+			pic[z].j[i].position[j].y=0;
 		}
 	}
 }
 
-void sommePointJoint(jointure *t) // Trouve les coordonnées du centre des cercle (jointure)
+void sommePointJoint(jointure *pic) // Trouve les coordonnées du centre des cercle (jointure)
 {
-	int i;
+	int i,h;
 	int sommation_x=0;
 	int sommation_y=0;
 	
-	for(i=0;i<t->j[0].nb;i++)
+	for(h=0;h<JOINT;h++)
 	{
-		sommation_x+=t->j[0].position[i].x;
-		sommation_y+=t->j[0].position[i].y;
+		for(i=0;i<pic->j[h].nb;i++)
+		{
+			sommation_x+=pic->j[h].position[i].x;
+			sommation_y+=pic->j[h].position[i].y;
+		}
+		if(pic->j[h].nb != 0)
+		{
+			pic->j[h].centre.x=sommation_x/pic->j[h].nb;
+			pic->j[h].centre.y=sommation_y/pic->j[h].nb;
+		}
+		sommation_x=0;
+		sommation_y=0;
 	}
-	if(t->j[0].nb != 0)
-	{
-		t->j[0].centre.x=sommation_x/t->j[0].nb;
-		t->j[0].centre.y=sommation_y/t->j[0].nb;
-	}
+
 }

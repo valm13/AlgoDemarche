@@ -20,6 +20,7 @@ typedef struct determ{
 typedef struct pos{
 	int x,y;
 }pos;
+
 typedef struct info{
 	pos position[MAXPIXJOINT]; // y puis x
 	int nb;
@@ -44,8 +45,8 @@ int calculH(determ det,int r,int g,int b);
 
 
 void ChangePixCouleurImg(image p,int color[HAUTEUR][LARGEUR]);
-void identifieColor(image tp,jointure joint[NBIMAGE],int z);
-void initialiseTabPoint(jointure t[NBIMAGE],int z);
-void sommePointJoint(jointure *t);
+void identifieColor(image tp,jointure pic[NBIMAGE],int z);
+void initialiseTabPoint(jointure pic[NBIMAGE],int z);
+void sommePointJoint(jointure *pic);
 
 #endif

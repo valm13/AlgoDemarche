@@ -66,7 +66,7 @@ void gestionEvenement(EvenementGfx evenement)
 	//~ static DonneesImageRGB imageretour;
 	static char nomImage[11];
 	static troimat mat;
-	static jointure joint[NBIMAGE];
+	static jointure pic[NBIMAGE];
 	switch (evenement)
 	{
 		case Initialisation:
@@ -74,7 +74,7 @@ void gestionEvenement(EvenementGfx evenement)
 			for(int i=0;i<NBIMAGE;i++)
 			{
 				printf("Image numero : %d\n\n",i);
-				sprintf(nomImage,"TestPic/%d.bmp",i+1);
+				sprintf(nomImage,"TestPic2/%d.bmp",i+1);
 				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&img);
 				printf("Image chargée\n");
@@ -84,18 +84,19 @@ void gestionEvenement(EvenementGfx evenement)
 				tp=rgbToHsv(mat);
 				printf("Transformation RGB->HSV : Fait !\n");
 		
-				identifieColor(tp,joint,i); // Problème ici
+				identifieColor(tp,pic,i); // Problème ici
 				printf("fin_main\n");
-				printf("joint[%d].j[0].nb = %d\n",i,joint[i].j[0].nb);
+				printf("pic[%d].j[0].nb = %d\n",i,pic[i].j[0].nb);
 				
 				
-				//~ for(int i = 0;i < joint.j[0].nb;i++)
-				//~ printf("x = %d\ny = %d\n",joint.j[0].position[i].x,joint.j[0].position[i].y);
-				sommePointJoint(&joint[i]);
+				//~ for(int i = 0;i < pic.j[0].nb;i++)
+				//~ printf("x = %d\ny = %d\n",pic.j[0].position[i].x,joint.j[0].position[i].y);
+				sommePointJoint(&pic[i]);
 				
-				printf("\nCentre : \nX = %d\nY = %d\n",joint[i].j[0].centre.x,joint[i].j[0].centre.y);
-				printf("\nCentre : \nX = %d\nY = %d\n",joint[i].j[1].centre.x,joint[i].j[1].centre.y);
+				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",i,pic[i].j[0].centre.x,pic[i].j[0].centre.y); 
 		}
+
+		
 			break;
 		
 		case Temporisation:
@@ -118,15 +119,17 @@ void gestionEvenement(EvenementGfx evenement)
 				printf("the picture can't be print\n");
 			}
 			couleurCourante(0,0,0);
-			//~ for(int b=0;b<joint.j[0].nb;b++)
-			//~ point(joint.j[0].position[b].x,joint.j[0].position[b].y);
-			//~ break;
-			//~ couleurCourante(255,0,255);
-			point(joint[0].j[0].centre.x,joint[0].j[0].centre.y);
-			point(joint[1].j[0].centre.x,joint[1].j[0].centre.y);
+
+	
+				for(int t=0;t<NBIMAGE;t++)
+				{
+					point(pic[t].j[0].centre.x,pic[t].j[0].centre.y);
+					//~ point(pic[t].j[1].centre.x,pic[t].j[1].centre.y);
+				}
+
 			
 		case Clavier:
-			printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
+			//~ printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
 
 			switch (caractereClavier())
 			{
