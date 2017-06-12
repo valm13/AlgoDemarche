@@ -146,24 +146,25 @@ void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 		}	
 }
 
-jointure identifieColor(image tp,DonneesImageRGB *img)
+void identifieColor(image tp,jointure joint[NBIMAGE],int z)
 {
-		jointure joint; // Position de chaques point appartenant à la couleur de certaines jointures
+		
 		int color[HAUTEUR][LARGEUR];	// Couleur détectée
 		int a=0;	// Variable d'incrémentation pour les position des points
-		initialiseTabPoint(&joint); // Initialise les cases du tableau à 0
-		printf("hauteurimage=%d\n",img->hauteurImage);
+		initialiseTabPoint(joint,z); // Initialise les cases du tableau à 0
 		ChangePixCouleurImg(tp,color);
 		for(int i = 0; i < HAUTEUR; i++)
 		{
 			for(int j = 0; j < LARGEUR; j++)
 			{
+				
+				
 				if (color[i][j] == 0) // Correspond à la couleur verte
 				{
-					joint.j[0].position[a].y=i;	// Ce 1 correspond aussi à la couleur Rouge	
-					joint.j[0].position[a].x=j;
+					joint[z].j[0].position[a].y=i;	// Ce 1 correspond aussi à la couleur Rouge	
+					joint[z].j[0].position[a].x=j;
 					a++;
-					joint.j[0].nb++;
+					joint[z].j[0].nb++;
 				}
 				else if (color[i][j] == -1) 
 				{
@@ -173,19 +174,20 @@ jointure identifieColor(image tp,DonneesImageRGB *img)
 			
 			
 		}
-		
-		return joint;
+		printf("fin\n");
 }
 
-void initialiseTabPoint(jointure *t)
+void initialiseTabPoint(jointure t[NBIMAGE],int z)
 {
+	printf("On rentre dans initialisePoiint\n");
 	for(int i=0;i<JOINT;i++)
-	{
-		t->j[i].nb=0;
+	{	
+		t[z].j[i].nb=0;
+		printf("salut %d\n",i);
 		for(int j=0;j<MAXPIXJOINT;j++)
 		{
-			t->j[i].position[j].x=0;
-			t->j[i].position[j].y=0;
+			t[z].j[i].position[j].x=0;
+			t[z].j[i].position[j].y=0;
 		}
 	}
 }

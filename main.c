@@ -22,7 +22,7 @@ void gestionEvenement(EvenementGfx evenement);
 
 int main(int argc, char **argv)
 {
-	const rlim_t StackSize = sizeof(image) * LARGEUR * HAUTEUR * 2;
+	const rlim_t StackSize = sizeof(image) * LARGEUR * HAUTEUR * 2 * 3;
 	struct rlimit rl;
 	int result;
 
@@ -66,48 +66,36 @@ void gestionEvenement(EvenementGfx evenement)
 	//~ static DonneesImageRGB imageretour;
 	static char nomImage[11];
 	static troimat mat;
-	static jointure joint;
+	static jointure joint[NBIMAGE];
 	switch (evenement)
 	{
 		case Initialisation:
 			demandeTemporisation(20);
-			strcpy(nomImage,"TestPic/test.bmp"); 
-			printf("\nChargement de l'image\n");
-			chargeImage(nomImage,&img); //WORK
-			
-			printf("Image chargée\n");
-			printf("image->largeurImage = %d\n",img->largeurImage);
-			
-			mat=cree3matrices(img);
-			printf("Matrice crée : Fait !\n");
-			
-			
-			//~ for(int k=0;k<600;k++)
-			//~ {
-				//~ printf("\nmat.r[50][%d]= %d\n",k,mat.r[k][608]);
-				//~ printf("mat.g[50][%d]= %d\n",k,mat.v[k][608]); //[y][x]
-				//~ printf("mat.b[50][%d]= %d\n",k,mat.b[k][608]);
-			//~ }
-			
-			
-			tp=rgbToHsv(mat);
-			printf("Transformation RGB->HSV : Fait !\n");
-			//~ imageretour.donneesRGB = malloc(image->hauteurImage * image->largeurImage * sizeof(unsigned char) * 3);
-			//~ if (imageretour.donneesRGB == NULL)
-			//~ {
-				//~ fprintf(stderr, "malloc error");
-			//~ }
-			//~ printf("Malloc image retour fait\n");
-			//~ imageretour.hauteurImage = image->hauteurImage;
-			//~ imageretour.largeurImage = image->largeurImage;
-			joint=identifieColor(tp,img);
-			printf("joint.j[0].nb = %d\n",joint.j[0].nb);
-			//~ for(int i = 0;i < joint.j[0].nb;i++)
-			//~ printf("x = %d\ny = %d\n",joint.j[0].position[i].x,joint.j[0].position[i].y);
-			sommePointJoint(&joint);
-			
-			printf("\nCentre : \nX = %d\nY = %d\n",joint.j[0].centre.x,joint.j[0].centre.y);
-			//~ ecrisBMPRGB_Dans(&imageretour,"pic001CONVERT.bmp");
+			for(int i=0;i<NBIMAGE;i++)
+			{
+				printf("Image numero : %d\n\n",i);
+				sprintf(nomImage,"TestPic/%d.bmp",i+1);
+				printf("\nChargement de l'image\n");
+				chargeImage(nomImage,&img);
+				printf("Image chargée\n");
+				printf("image->largeurImage = %d\n",img->largeurImage);
+				mat=cree3matrices(img);
+				printf("Matrice crée : Fait !\n");
+				tp=rgbToHsv(mat);
+				printf("Transformation RGB->HSV : Fait !\n");
+		
+				identifieColor(tp,joint,i); // Problème ici
+				printf("fin_main\n");
+				printf("joint[%d].j[0].nb = %d\n",i,joint[i].j[0].nb);
+				
+				
+				//~ for(int i = 0;i < joint.j[0].nb;i++)
+				//~ printf("x = %d\ny = %d\n",joint.j[0].position[i].x,joint.j[0].position[i].y);
+				sommePointJoint(&joint[i]);
+				
+				printf("\nCentre : \nX = %d\nY = %d\n",joint[i].j[0].centre.x,joint[i].j[0].centre.y);
+				printf("\nCentre : \nX = %d\nY = %d\n",joint[i].j[1].centre.x,joint[i].j[1].centre.y);
+		}
 			break;
 		
 		case Temporisation:
@@ -134,7 +122,8 @@ void gestionEvenement(EvenementGfx evenement)
 			//~ point(joint.j[0].position[b].x,joint.j[0].position[b].y);
 			//~ break;
 			//~ couleurCourante(255,0,255);
-			point(joint.j[0].centre.x,joint.j[0].centre.y);
+			point(joint[0].j[0].centre.x,joint[0].j[0].centre.y);
+			point(joint[1].j[0].centre.x,joint[1].j[0].centre.y);
 			
 		case Clavier:
 			printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
