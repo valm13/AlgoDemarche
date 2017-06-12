@@ -55,6 +55,10 @@ void gestionEvenement(EvenementGfx evenement)
 {
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
+	static int SelecCase = 0;
+	static int EtatFilmer = 0;
+	static int ChoixLangue = 0;
+	
 	static tabbouton t;
 	static bool pleinEcran = false; 
 
@@ -63,7 +67,7 @@ void gestionEvenement(EvenementGfx evenement)
 	{
 		case Initialisation:
 			rafraichisFenetre();
-			sauveTexteBouton();
+			sauveTexteBouton( ChoixLangue);
 			
 			demandeTemporisation(1);
 			break;
@@ -74,11 +78,11 @@ void gestionEvenement(EvenementGfx evenement)
 			
 		case Affichage:
 			
-			effaceFenetre (255, 255, 255);
+			effaceFenetre(44, 62, 80);
 
-			AffMenu (EtatMenu, SelecBouton, t);
+			AffMenu (EtatMenu, SelecBouton, t, SelecCase, EtatFilmer);
 			t = IniBouton ();
-			lisTexteBouton(&t); 
+			lisTexteBouton(&t, ChoixLangue); 
 			demandeTemporisation(2);
 			break;
 			
@@ -89,7 +93,6 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				case 'Q':
 				case 'q':
-					libereDonneesImageRGB(&image);
 					termineBoucleEvenements();
 					break;
 
@@ -127,13 +130,19 @@ void gestionEvenement(EvenementGfx evenement)
 			if (etatBoutonSouris() == GaucheAppuye)
 			{
 				printf("Bouton gauche appuye en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
-				EncadrementBouton (&SelecBouton);
-				ClicOk (&EtatMenu, SelecBouton);
+				EncadrementBouton (&SelecBouton, EtatMenu);
+				ClicLangue (&ChoixLangue, EtatMenu);
+				ClicOk (&EtatMenu, &SelecBouton, &SelecCase, &EtatFilmer);
+				ClicApprentissage (EtatMenu, &SelecCase);
+				ClicFilmer (&EtatFilmer, EtatMenu, SelecCase, SelecBouton);
+
 			}
 			else if (etatBoutonSouris() == GaucheRelache)
 			{
 				printf("Bouton gauche relache en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
 			}
+
+			printf ("\n\nEM = %d et SB = %d",EtatMenu, SelecBouton);
 			break;
 		
 		case Souris: // Si la souris est deplacee
