@@ -88,15 +88,10 @@ void gestionEvenement(EvenementGfx evenement)
 				printf("fin_main\n");
 				printf("pic[%d].j[0].nb = %d\n",i,pic[i].j[0].nb);
 				
-				
-				//~ for(int i = 0;i < pic.j[0].nb;i++)
-				//~ printf("x = %d\ny = %d\n",pic.j[0].position[i].x,joint.j[0].position[i].y);
-				sommePointJoint(&pic[i]);
+				sommePointJoint(&pic[i]);	
 				
 				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",i,pic[i].j[0].centre.x,pic[i].j[0].centre.y); 
-		}
-
-		
+			}
 			break;
 		
 		case Temporisation:
@@ -123,8 +118,31 @@ void gestionEvenement(EvenementGfx evenement)
 	
 				for(int t=0;t<NBIMAGE;t++)
 				{
-					point(pic[t].j[0].centre.x,pic[t].j[0].centre.y);
-					//~ point(pic[t].j[1].centre.x,pic[t].j[1].centre.y);
+					for(int k=0;k<JOINT;k++)
+					{	
+						switch(k)
+						{
+							case 0:
+							couleurCourante(0,255,0);
+							break;
+							case 1:
+							couleurCourante(0,0,255);
+							break;
+							case 2:
+							couleurCourante(0,100,0);
+							break;
+							case 3:
+							couleurCourante(100,0,0);
+							break;
+							case 4:
+							couleurCourante(0,0,100);
+							break;
+						}
+						point(pic[t].j[k].centre.x,pic[t].j[k].centre.y);
+						if(t+1!=NBIMAGE)
+							ligne(pic[t].j[k].centre.x,pic[t].j[k].centre.y,pic[t+1].j[k].centre.x,pic[t+1].j[k].centre.y);
+					}
+
 				}
 
 			

@@ -3,5 +3,5 @@
 
 #define LARGEUR 800	// Largeur de l'image 1920
 #define HAUTEUR 600	// Hauteur de l'image 1080 | image de test : 800 / 600
-#define NBIMAGE 3 // Nombre total d'images
+#define NBIMAGE 9 // Nombre total d'images
 #endif

@@ -118,46 +118,21 @@ int calculH(determ det,int r,int g,int b)
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
 	int offset = 10;
-	int target[JOINT] = {0,50,120,180,205};
+	int target[JOINT] = {120,0,50,180,205};
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
 			for(int j = 0; j < LARGEUR; j++)
 			{
+				color[i][j]= -1; 
 				for(int u=0;u<5;u++)
 				{
-					color[i][j]= -1; 
 					if(t.h[i][j] < target[u] + offset && t.h[i][j] > target[u] - offset)
 					{
-						printf("u=%d\n",u);
+						//~ printf("u=%d\n",u);
 						color[i][j]= u; // C'est du rouge
 					}
 				}
-				if((t.h[i][j] < target[0] + offset && t.h[i][j] > target[0] - offset)) 
-				{
-				color[i][j]= 0; // C'est du rouge
-				}
-				//~ else if((t.h[i][j] < target[1] + offset && t.h[i][j] > target[1] - offset))
-				//~ {
-				//~ color[i][j]= 1; // C'est du jaune
-				//~ }
-				//~ else if((t.h[i][j] < target[2] + offset && t.h[i][j] > target[2] - offset))
-				//~ {
-				//~ color[i][j]= 2; // C'est du vert
-				//~ }
-				//~ else if((t.h[i][j] < target[3] + offset && t.h[i][j] > target[3] - offset))
-				//~ {
-				//~ color[i][j]= 3; // C'est du turquoise
-				//~ }
-				//~ else if((t.h[i][j] < target[4] + offset && t.h[i][j] > target[4] - offset))
-				//~ {
-				//~ color[i][j]= 4; // C'est du bleu plus foncé
-				//~ }
-				//~ else 
-				//~ {
-				//~ color[i][j]= -1; // Autres couleurs
-				//~ printf("autre\n");
-				//~ }
 			}
 		}	
 }
@@ -166,53 +141,22 @@ void identifieColor(image tp,jointure pic[NBIMAGE],int z)
 {
 		
 		int color[HAUTEUR][LARGEUR];	// Couleur détectée
-		int a=0;	// Variable d'incrémentation pour les position des points
-		int b=0;
-		int c=0;
-		int d=0;
-		int e=0;
+		int casetab[JOINT]={0}; //	Case du tableau de la position de x et y | il s'incremente donc !
 		initialiseTabPoint(pic,z); // Initialise les cases du tableau à 0
 		ChangePixCouleurImg(tp,color);
 		for(int i = 0; i < HAUTEUR; i++)
 		{
 			for(int j = 0; j < LARGEUR; j++)
 			{
-				switch(color[i][j])
+				for(int k = 0;k<JOINT;k++)
 				{
-					case 0:
-					pic[z].j[0].position[a].y=i;	// Rouge
-					pic[z].j[0].position[a].x=j;
-					a++;
-					pic[z].j[0].nb++;
-					break;
-					
-					case 1:
-					pic[z].j[1].position[a].y=i;	// Rouge
-					pic[z].j[1].position[a].x=j;
-					b++;
-					pic[z].j[1].nb++;
-					break;
-					
-					case 2:
-					pic[z].j[2].position[a].y=i;	// Rouge
-					pic[z].j[2].position[a].x=j;
-					c++;
-					pic[z].j[2].nb++;
-					break;
-					
-					case 3:
-					pic[z].j[3].position[a].y=i;	// Rouge
-					pic[z].j[3].position[a].x=j;
-					d++;
-					pic[z].j[3].nb++;
-					break;
-					
-					case 4:
-					pic[z].j[4].position[a].y=i;	// Rouge
-					pic[z].j[4].position[a].x=j;
-					e++;
-					pic[z].j[4].nb++;
-					break;
+					if(color[i][j]==k)
+					{
+						pic[z].j[k].position[casetab[k]].y=i;	
+						pic[z].j[k].position[casetab[k]].x=j;
+						casetab[k]++;
+						pic[z].j[k].nb++;
+					}
 				}
 			}	
 		}
@@ -234,23 +178,26 @@ void initialiseTabPoint(jointure pic[NBIMAGE],int z)
 void sommePointJoint(jointure *pic) // Trouve les coordonnées du centre des cercle (jointure)
 {
 	int i,h;
-	int sommation_x=0;
-	int sommation_y=0;
+	int som_x;
+	int som_y;
 	
 	for(h=0;h<JOINT;h++)
 	{
+		som_x=0;
+		som_y=0;
 		for(i=0;i<pic->j[h].nb;i++)
 		{
-			sommation_x+=pic->j[h].position[i].x;
-			sommation_y+=pic->j[h].position[i].y;
+			som_x += pic->j[h].position[i].x;
+			som_y += pic->j[h].position[i].y;
+			printf(" (%d,%d)",pic->j[h].position[i].x,pic->j[h].position[i].y);
 		}
 		if(pic->j[h].nb != 0)
 		{
-			pic->j[h].centre.x=sommation_x/pic->j[h].nb;
-			pic->j[h].centre.y=sommation_y/pic->j[h].nb;
+			pic->j[h].centre.x=som_x/pic->j[h].nb;
+			pic->j[h].centre.y=som_y/pic->j[h].nb;
+			printf(" \nNb = %d ,Joint : %d , (%d,%d)\n",pic->j[h].nb,h,pic->j[h].centre.x,pic->j[h].centre.y);
 		}
-		sommation_x=0;
-		sommation_y=0;
+		
 	}
-
+	
 }
