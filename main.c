@@ -73,8 +73,8 @@ void gestionEvenement(EvenementGfx evenement)
 			demandeTemporisation(20);
 			for(int i=0;i<NBIMAGE;i++)
 			{
-				printf("Image numero : %d\n\n",i);
-				sprintf(nomImage,"TestPic2/%d.bmp",i+1);
+				printf("Image numero : %03d\n\n",i);
+				sprintf(nomImage,"Pictures/pic%03d.bmp",i+1);
 				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&img);
 				printf("Image chargée\n");
