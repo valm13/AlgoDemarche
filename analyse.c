@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "libISEN/BmpLib.h"
 #include "matrice.h"
 #include "analyse.h"
 #include "toolbox.h"
@@ -118,19 +117,19 @@ int calculH(determ det,int r,int g,int b)
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
 	int offset = 10;
-	int target[JOINT] = {120,0,50,180,205};
+	//~ int target[JOINT] = {120,0,50,180,205};
+	int target[JOINT] = {305};
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
 			for(int j = 0; j < LARGEUR; j++)
 			{
 				color[i][j]= -1; 
-				for(int u=0;u<5;u++)
+				for(int u=0;u<JOINT;u++)
 				{
 					if(t.h[i][j] < target[u] + offset && t.h[i][j] > target[u] - offset)
 					{
-						//~ printf("u=%d\n",u);
-						color[i][j]= u; // C'est du rouge
+						color[i][j]= u;
 					}
 				}
 			}
@@ -189,9 +188,9 @@ void sommePointJoint(jointure *pic) // Trouve les coordonnées du centre des cer
 		{
 			som_x += pic->j[h].position[i].x;
 			som_y += pic->j[h].position[i].y;
-			printf(" (%d,%d)",pic->j[h].position[i].x,pic->j[h].position[i].y);
+			//~ printf(" (%d,%d)",pic->j[h].position[i].x,pic->j[h].position[i].y); si (0,0) -> problème
 		}
-		if(pic->j[h].nb != 0)
+		if(pic->j[h].nb != 0) // pic->j[h].nb > 100 ?
 		{
 			pic->j[h].centre.x=som_x/pic->j[h].nb;
 			pic->j[h].centre.y=som_y/pic->j[h].nb;

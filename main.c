@@ -7,8 +7,7 @@
 #include "libISEN/BmpLib.h"
 #include "libISEN/ESLib.h"
 #include "Affichage.h"
-#include "matrice.h"
-#include "analyse.h"
+#include "reconnaissance.h"
 
 // Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
@@ -22,7 +21,7 @@ void gestionEvenement(EvenementGfx evenement);
 
 int main(int argc, char **argv)
 {
-	const rlim_t StackSize = sizeof(image) * LARGEUR * HAUTEUR * 2 * 3;
+	const rlim_t StackSize = sizeof(image) * 2 * 3;
 	struct rlimit rl;
 	int result;
 
@@ -59,14 +58,16 @@ des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
 	static image tp;
-	static int EtatMenu = 0;
-	static int SelecBouton = 0;
 	static bool pleinEcran = false;
 	static DonneesImageRGB *img = NULL;
 	//~ static DonneesImageRGB imageretour;
 	static char nomImage[11];
 	static troimat mat;
 	static jointure pic[NBIMAGE];
+	//Taille image par rapport à la taille de la fenetre 1920 -> 800 / 1080 -> 600
+	static int ratio_x;
+	static int ratio_y;
+	
 	switch (evenement)
 	{
 		case Initialisation:
@@ -74,24 +75,23 @@ void gestionEvenement(EvenementGfx evenement)
 			for(int i=0;i<NBIMAGE;i++)
 			{
 				printf("Image numero : %d\n\n",i);
-				sprintf(nomImage,"TestPic2/%d.bmp",i+1);
+				//~ sprintf(nomImage,"TestPic2/%d.bmp",i+1);
+				sprintf(nomImage,"Valentincirculaire/pic%03d.bmp",i+1);
 				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&img);
 				printf("Image chargée\n");
-				printf("image->largeurImage = %d\n",img->largeurImage);
 				mat=cree3matrices(img);
 				printf("Matrice crée : Fait !\n");
 				tp=rgbToHsv(mat);
 				printf("Transformation RGB->HSV : Fait !\n");
-		
 				identifieColor(tp,pic,i); // Problème ici
-				printf("fin_main\n");
 				printf("pic[%d].j[0].nb = %d\n",i,pic[i].j[0].nb);
-				
 				sommePointJoint(&pic[i]);	
-				
-				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",i,pic[i].j[0].centre.x,pic[i].j[0].centre.y); 
+				if(i <NBIMAGE-1)
+				libereDonneesImageRGB(&img);
 			}
+			ratio_x = img->largeurImage/LargeurFenetre;
+			ratio_y = img->hauteurImage/HauteurFenetre;
 			break;
 		
 		case Temporisation:
@@ -101,12 +101,10 @@ void gestionEvenement(EvenementGfx evenement)
 		case Affichage:
 			
 			effaceFenetre (255, 255, 255);
-
-			AffMenu (EtatMenu, SelecBouton);
 			
 			if (img != NULL)
 			{
-				ecrisImage(0, 0, img->largeurImage, img->hauteurImage, img->donneesRGB);
+				//~ ecrisImage(0, 0, img->largeurImage, img->hauteurImage, img->donneesRGB);
 			}
 			
 			else
@@ -132,15 +130,17 @@ void gestionEvenement(EvenementGfx evenement)
 							couleurCourante(0,100,0);
 							break;
 							case 3:
+							
 							couleurCourante(100,0,0);
 							break;
 							case 4:
 							couleurCourante(0,0,100);
 							break;
 						}
-						point(pic[t].j[k].centre.x,pic[t].j[k].centre.y);
+						point(pic[t].j[k].centre.x/ratio_x,pic[t].j[k].centre.y/ratio_y);
 						if(t+1!=NBIMAGE)
-							ligne(pic[t].j[k].centre.x,pic[t].j[k].centre.y,pic[t+1].j[k].centre.x,pic[t+1].j[k].centre.y);
+							ligne(pic[t].j[k].centre.x/ratio_x,pic[t].j[k].centre.y/ratio_y,
+							pic[t+1].j[k].centre.x/ratio_x,pic[t+1].j[k].centre.y/ratio_y);
 					}
 
 				}

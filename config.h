@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define LARGEUR 800	// Largeur de l'image 1920
-#define HAUTEUR 600	// Hauteur de l'image 1080 | image de test : 800 / 600
-#define NBIMAGE 9 // Nombre total d'images
+#define LARGEUR 1920	// Largeur de l'image 1920
+#define HAUTEUR 1080	// Hauteur de l'image 1080 | image de test : 800 / 600
+#define NBIMAGE 10 // Nombre total d'images
 #endif
