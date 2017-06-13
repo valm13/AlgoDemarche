@@ -57,7 +57,11 @@ int main(int argc, char **argv)
 des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
+	static bool pause = true;
+	static int in;
 	static image tp;
+	static int EtatMenu = 0;
+	static int SelecBouton = 0;
 	static bool pleinEcran = false;
 	static DonneesImageRGB *img = NULL;
 	//~ static DonneesImageRGB imageretour;
@@ -71,24 +75,73 @@ void gestionEvenement(EvenementGfx evenement)
 	switch (evenement)
 	{
 		case Initialisation:
-			demandeTemporisation(20);
-			for(int i=0;i<NBIMAGE;i++)
+			demandeTemporisation(200);
+			printf("Image numero : %03d\n\n",in);
+			sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
+			printf("\nChargement de l'image\n");
+			chargeImage(nomImage,&img);
+			printf("Image chargée\n");
+			printf("image->largeurImage = %d\n",img->largeurImage);
+			mat=cree3matrices(img);
+			printf("Matrice crée : Fait !\n");
+			tp=rgbToHsv(mat);
+			printf("Transformation RGB->HSV : Fait !\n");
+
+			identifieColor(tp,pic,in);
+			printf("fin_main\n");
+			printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
+
+			sommePointJoint(&pic[in]);
+			in ++;
+
+			printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",in ,pic[in].j[0].centre.x,pic[in].j[0].centre.y);
+//			for(int i=0;i<NBIMAGE;i++)
+//			{
+//				printf("Image numero : %03d\n\n",i);
+//				sprintf(nomImage,"Pictures/pic%03d.bmp",i+1);
+//				printf("\nChargement de l'image\n");
+//				chargeImage(nomImage,&img);
+//				printf("Image chargée\n");
+//				printf("image->largeurImage = %d\n",img->largeurImage);
+//				mat=cree3matrices(img);
+//				printf("Matrice crée : Fait !\n");
+//				tp=rgbToHsv(mat);
+//				printf("Transformation RGB->HSV : Fait !\n");
+//
+//				identifieColor(tp,pic,i); // Problème ici
+//				printf("fin_main\n");
+//				printf("pic[%d].j[0].nb = %d\n",i,pic[i].j[0].nb);
+//
+//				sommePointJoint(&pic[i]);
+//
+//				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",i,pic[i].j[0].centre.x,pic[i].j[0].centre.y);
+//			}
+			break;
+		
+		case Temporisation:
+			if( in < NBIMAGE && !pause)
 			{
-				printf("Image numero : %d\n\n",i);
-				//~ sprintf(nomImage,"TestPic2/%d.bmp",i+1);
-				sprintf(nomImage,"Valentincirculaire/pic%03d.bmp",i+1);
+				printf("Image numero : %03d\n\n",in);
+				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
 				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&img);
 				printf("Image chargée\n");
+				printf("image->largeurImage = %d\n",img->largeurImage);
 				mat=cree3matrices(img);
 				printf("Matrice crée : Fait !\n");
 				tp=rgbToHsv(mat);
 				printf("Transformation RGB->HSV : Fait !\n");
-				identifieColor(tp,pic,i); // Problème ici
-				printf("pic[%d].j[0].nb = %d\n",i,pic[i].j[0].nb);
-				sommePointJoint(&pic[i]);	
+
+				identifieColor(tp,pic,in);
+				printf("fin_main\n");
+				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
+
+				sommePointJoint(&pic[in]);
+
+				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",in ,pic[in].j[0].centre.x,pic[in].j[0].centre.y);
+				in ++;
 				if(i <NBIMAGE-1)
-				libereDonneesImageRGB(&img);
+				libereDonneesImageRGB(&img);	
 			}
 			ratio_x = img->largeurImage/LargeurFenetre;
 			ratio_y = img->hauteurImage/HauteurFenetre;
@@ -104,7 +157,7 @@ void gestionEvenement(EvenementGfx evenement)
 			
 			if (img != NULL)
 			{
-				//~ ecrisImage(0, 0, img->largeurImage, img->hauteurImage, img->donneesRGB);
+				ecrisImage(0, 0, img->largeurImage, img->hauteurImage, img->donneesRGB);
 			}
 			
 			else
@@ -114,7 +167,7 @@ void gestionEvenement(EvenementGfx evenement)
 			couleurCourante(0,0,0);
 
 	
-				for(int t=0;t<NBIMAGE;t++)
+				for(int t=0;t<in-1;t++)//NBIMAGE;t++)
 				{
 					for(int k=0;k<JOINT;k++)
 					{	
@@ -130,21 +183,19 @@ void gestionEvenement(EvenementGfx evenement)
 							couleurCourante(0,100,0);
 							break;
 							case 3:
-							
 							couleurCourante(100,0,0);
 							break;
 							case 4:
 							couleurCourante(0,0,100);
 							break;
 						}
-						point(pic[t].j[k].centre.x/ratio_x,pic[t].j[k].centre.y/ratio_y);
+						point(pic[t].j[k].centre.x,pic[t].j[k].centre.y);
 						if(t+1!=NBIMAGE)
-							ligne(pic[t].j[k].centre.x/ratio_x,pic[t].j[k].centre.y/ratio_y,
-							pic[t+1].j[k].centre.x/ratio_x,pic[t+1].j[k].centre.y/ratio_y);
+							ligne(pic[t].j[k].centre.x,pic[t].j[k].centre.y,pic[t+1].j[k].centre.x,pic[t+1].j[k].centre.y);
 					}
 
 				}
-
+				break;
 			
 		case Clavier:
 			//~ printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
@@ -178,11 +229,18 @@ void gestionEvenement(EvenementGfx evenement)
 					demandeTemporisation(100);
 					break;
 
+				case 'p':
+					pause = !pause;
+					break;
+
 				case 'S':
 				case 's':
 					// Configure le systeme pour ne plus generer de message Temporisation
 					demandeTemporisation(-1);
 					break;
+				default :
+					break;
+
 			}
 			break;
 			
