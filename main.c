@@ -1,6 +1,11 @@
 #include <stdlib.h> 
 #include <stdio.h> 
 #include <math.h> 
+#include "GfxLib.h"
+#include "BmpLib.h"
+#include "ESLib.h"
+#include "GereClic.h"
+#include "Bouton.h"
 #include <string.h>
 #include <sys/resource.h>
 #include "libISEN/GfxLib.h"
@@ -11,7 +16,6 @@
 #include "analyse.h"
 #include "reconnaissance.h"
 
-// Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
 #define HauteurFenetre 600
 
@@ -59,19 +63,22 @@ int main(int argc, char **argv)
 des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
-	static bool pause = true;
-	static int in = START_IMAGE;
-	static image tp;
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
-	static bool pleinEcran = false;
-	static DonneesImageRGB *img = NULL;
-	//~ static DonneesImageRGB imageretour;
+	static int SelecCase = 0;
+	static int EtatFilmer = 0;
+	static int ChoixLangue = 0;
+	
+	static tabbouton t;
+	static bool pleinEcran = false; 
+
+	static DonneesImageRGB *image = NULL;
 	static char nomImage[11];
 	static troimat mat;
 	static jointure pic[NBIMAGE];
 	static int speed = 20;
 	int touche;
+	static int in = START_IMAGE;
 	//Taille image par rapport à la taille de la fenetre 1920 -> 800 / 1080 -> 600
 	static int ratio_x;
 	static int ratio_y;
@@ -79,87 +86,27 @@ void gestionEvenement(EvenementGfx evenement)
 	switch (evenement)
 	{
 		case Initialisation:
-			demandeTemporisation(200);
-			printf("Image numero : %03d\n\n",in);
-			sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
-			printf("\nChargement de l'image\n");
-			chargeImage(nomImage,&img);
-			printf("Image chargée\n");
-			printf("image->largeurImage = %d\n",img->largeurImage);
-			mat=cree3matrices(img);
-			printf("Matrice crée : Fait !\n");
-			tp=rgbToHsv(mat);
-			printf("Transformation RGB->HSV : Fait !\n");
-
-			identifieColor(tp,pic,in);
-			printf("fin_main\n");
-			printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
-
-			sommePointJoint(&pic[in]);
-			in ++;
-
-			printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",in ,pic[in].j[0].centre.x,pic[in].j[0].centre.y);
-//			for(int i=0;i<NBIMAGE;i++)
-//			{
-//				printf("Image numero : %03d\n\n",i);
-//				sprintf(nomImage,"Pictures/pic%03d.bmp",i+1);
-//				printf("\nChargement de l'image\n");
-//				chargeImage(nomImage,&img);
-//				printf("Image chargée\n");
-//				printf("image->largeurImage = %d\n",img->largeurImage);
-//				mat=cree3matrices(img);
-//				printf("Matrice crée : Fait !\n");
-//				tp=rgbToHsv(mat);
-//				printf("Transformation RGB->HSV : Fait !\n");
-//
-//				identifieColor(tp,pic,i); // Problème ici
-//				printf("fin_main\n");
-//				printf("pic[%d].j[0].nb = %d\n",i,pic[i].j[0].nb);
-//
-//				sommePointJoint(&pic[i]);
-//
-//				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",i,pic[i].j[0].centre.x,pic[i].j[0].centre.y);
-//			}
+			image = lisBMPRGB("Pictures/pic001.bmp");
+			rafraichisFenetre();
+			demandeTemporisation(-1);
+			sauveTexteBouton( ChoixLangue);
+			t = IniBouton ();
 			break;
 		
 		case Temporisation:
-			if( in < NBIMAGE && !pause)
-			{
-				libereDonneesImageRGB(&img);
-				printf("Image numero : %03d\n\n",in);
-				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
-				printf("\nChargement de l'image\n");
-				chargeImage(nomImage,&img);
-				printf("Image chargée\n");
-				printf("image->largeurImage = %d\n",img->largeurImage);
-				mat=cree3matrices(img);
-				printf("Matrice crée : Fait !\n");
-				tp=rgbToHsv(mat);
-				printf("Transformation RGB->HSV : Fait !\n");
-
-				identifieColor(tp,pic,in);
-				printf("fin_main\n");
-				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
-
-				sommePointJoint(&pic[in]);
-
-				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",in ,pic[in].j[0].centre.x,pic[in].j[0].centre.y);
-				in ++;
-			}
-			ratio_x = img->largeurImage/LargeurFenetre;
-			ratio_y = img->hauteurImage/HauteurFenetre;
 			rafraichisFenetre();
 			break;
 			
 		case Affichage:
 			
-			effaceFenetre (255, 255, 255);
+			effaceFenetre(44, 62, 80);
 
-			AffMenu (EtatMenu, SelecBouton);
+			lisTexteBouton(&t, ChoixLangue);
+			AffMenu (EtatMenu, SelecBouton, t, SelecCase, EtatFilmer);
 			
-			if (img != NULL)
+			if (image != NULL)
 			{
-				ecrisImage(0, 0, img->largeurImage, img->hauteurImage, img->donneesRGB);
+//				ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
 			}
 			
 			else
@@ -200,13 +147,13 @@ void gestionEvenement(EvenementGfx evenement)
 				break;
 			
 		case Clavier:
-			//~ printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
+			printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
 
 			switch (caractereClavier())
 			{
 				case 'Q': /* Pour sortir quelque peu proprement du programme */
 				case 'q':
-					libereDonneesImageRGB(&img);
+					libereDonneesImageRGB(&image);
 					termineBoucleEvenements();
 					break;
 
@@ -224,8 +171,9 @@ void gestionEvenement(EvenementGfx evenement)
 					in = START_IMAGE;
 					break;
 
-				case 'p':
-					pause = !pause;
+				case 'L':
+				case 'l':
+					demandeTemporisation(100);
 					break;
 
 				case 'S':
@@ -237,11 +185,12 @@ void gestionEvenement(EvenementGfx evenement)
 					break;
 
 			}
+			rafraichisFenetre();
 			break;
 			
 		case ClavierSpecial:
 			touche = toucheClavier();
-			printf("ASCII %d\n", touche);
+//			printf("ASCII %d\n", touche);
 			switch (touche) {
 				case 13:
 					speed+=10;
@@ -252,23 +201,32 @@ void gestionEvenement(EvenementGfx evenement)
 				default:
 					break;
 			}
-			if(speed < 0)
+			if(speed < -1)
 			{
-				speed = 0;
+				speed = -1;
 			}
-			printf("speed : %d\n", speed);
+//			printf("speed : %d\n", speed);
 			demandeTemporisation(speed);
+			rafraichisFenetre();
 			break;
 
 		case BoutonSouris:
 			if (etatBoutonSouris() == GaucheAppuye)
 			{
-				printf("Bouton gauche appuye en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
+//				printf("Bouton gauche appuye en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
+				EncadrementBouton (&SelecBouton, EtatMenu);
+				ClicLangue (&ChoixLangue, EtatMenu);
+				ClicOk (&EtatMenu, &SelecBouton, &SelecCase, &EtatFilmer);
+				ClicApprentissage (EtatMenu, &SelecCase);
+				ClicFilmer (&EtatFilmer, EtatMenu, SelecCase, SelecBouton);
+
 			}
 			else if (etatBoutonSouris() == GaucheRelache)
 			{
-				printf("Bouton gauche relache en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
+//				printf("Bouton gauche relache en : (%d, %d)\n", abscisseSouris(), ordonneeSouris());
 			}
+			rafraichisFenetre();
+//			printf ("\n\nEM = %d et SB = %d",EtatMenu, SelecBouton);
 			break;
 		
 		case Souris: // Si la souris est deplacee
