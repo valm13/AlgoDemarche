@@ -1,6 +1,9 @@
+rm -r Pictures
 mkdir Pictures
-mkdir video
-rm -f Pictures/*.jpeg
-rm -f video/video.h264
-raspivid -o video/video.h264 -t $1
-ffmpeg -i video/video.h264 -r 10 -f image2 Pictures/pic%03d.bmp
+rm -f video.h264
+echo "taking pictures"
+ssh -t pi@192.168.1.2 "raspivid -o video/video.h264 -t 6000"
+echo "coping video from rapsi"
+scp pi@192.168.1.2:~/video/video.h264 .
+echo "extract pictures"
+ffmpeg -i video.h264 -r 10 -f image2 Pictures/pic%03d.bmp

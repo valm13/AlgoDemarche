@@ -16,6 +16,7 @@
 #include "analyse.h"
 #include "reconnaissance.h"
 
+// Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
 #define HauteurFenetre 600
 
@@ -63,12 +64,13 @@ int main(int argc, char **argv)
 des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
+	static bool pause = true;
+	static image tp;
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
 	static int SelecCase = 0;
 	static int EtatFilmer = 0;
 	static int ChoixLangue = 0;
-	static image tp;
 	
 	static tabbouton t;
 	static bool pleinEcran = false; 
@@ -81,8 +83,6 @@ void gestionEvenement(EvenementGfx evenement)
 	int touche;
 	static int in = START_IMAGE;
 	//Taille image par rapport à la taille de la fenetre 1920 -> 800 / 1080 -> 600
-	static int ratio_x;
-	static int ratio_y;
 	
 	switch (evenement)
 	{
@@ -97,6 +97,7 @@ void gestionEvenement(EvenementGfx evenement)
 		case Temporisation:
 			if (EtatFilmer == true && in < (NBIMAGE - 1))
 			{
+				libereDonneesImageRGB(&image);
 				printf("Image numero : %03d\n\n",in);
 				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
 				printf("\nChargement de l'image\n");
@@ -197,9 +198,8 @@ void gestionEvenement(EvenementGfx evenement)
 					in = START_IMAGE;
 					break;
 
-				case 'L':
-				case 'l':
-					demandeTemporisation(100);
+				case 'p':
+					pause = !pause;
 					break;
 
 				case 'S':
@@ -216,7 +216,7 @@ void gestionEvenement(EvenementGfx evenement)
 			
 		case ClavierSpecial:
 			touche = toucheClavier();
-//			printf("ASCII %d\n", touche);
+			printf("ASCII %d\n", touche);
 			switch (touche) {
 				case 13:
 					speed+=10;
@@ -265,6 +265,7 @@ void gestionEvenement(EvenementGfx evenement)
 			// Donc le systeme nous en informe
 			printf("Largeur : %d\t", largeurFenetre());
 			printf("Hauteur : %d\n", hauteurFenetre());
+			t = IniBouton ();
 			break;
 	}
 }
