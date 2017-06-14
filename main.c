@@ -68,6 +68,7 @@ void gestionEvenement(EvenementGfx evenement)
 	static int SelecCase = 0;
 	static int EtatFilmer = 0;
 	static int ChoixLangue = 0;
+	static image tp;
 	
 	static tabbouton t;
 	static bool pleinEcran = false; 
@@ -88,12 +89,37 @@ void gestionEvenement(EvenementGfx evenement)
 		case Initialisation:
 			image = lisBMPRGB("Pictures/pic001.bmp");
 			rafraichisFenetre();
-			demandeTemporisation(-1);
+			demandeTemporisation(400);
 			sauveTexteBouton( ChoixLangue);
 			t = IniBouton ();
 			break;
 		
 		case Temporisation:
+			if (EtatFilmer == true && in < (NBIMAGE - 1))
+			{
+				printf("Image numero : %03d\n\n",in);
+				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
+				printf("\nChargement de l'image\n");
+				chargeImage(nomImage,&image);
+				printf("Image chargée\n");
+				printf("image->largeurImage = %d\n",image->largeurImage);
+				mat=cree3matrices(image);
+				printf("Matrice crée : Fait !\n");
+				tp = rgbToHsv(mat);
+				printf("Transformation RGB->HSV : Fait !\n");
+
+				identifieColor(tp, pic, in);
+				printf("fin_main\n");
+				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
+
+				sommePointJoint(&pic[in]);
+				++ in;
+			}
+			else if (in >= (NBIMAGE - 1))
+			{
+				EtatFilmer = false;
+			}
+
 			rafraichisFenetre();
 			break;
 			
@@ -103,23 +129,23 @@ void gestionEvenement(EvenementGfx evenement)
 
 			lisTexteBouton(&t, ChoixLangue);
 			AffMenu (EtatMenu, SelecBouton, t, SelecCase, EtatFilmer);
-			
-			if (image != NULL)
+			if (EtatFilmer == true)
 			{
-//				ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
-			}
-			
-			else
-			{
-				printf("the picture can't be print\n");
-			}
-			couleurCourante(0,0,0);
+				if (image != NULL)
+				{
+					ecrisImage(0, 0, image->largeurImage, image->hauteurImage, image->donneesRGB);
+				}
 
-	
-				for(int t=START_IMAGE;t<in-1;t++)//NBIMAGE;t++)
+				else
+				{
+					printf("the picture can't be print\n");
+				}
+				couleurCourante(0,0,0);
+
+				for(int t=START_IMAGE;t<in-1;t++)
 				{
 					for(int k=0;k<JOINT;k++)
-					{	
+					{
 						switch(k)
 						{
 							case 0:
@@ -142,9 +168,9 @@ void gestionEvenement(EvenementGfx evenement)
 						if(t+1!=NBIMAGE)
 							ligne(pic[t].j[k].centre.x,pic[t].j[k].centre.y,pic[t+1].j[k].centre.x,pic[t+1].j[k].centre.y);
 					}
-
 				}
-				break;
+			}
+			break;
 			
 		case Clavier:
 			printf("%c : ASCII %d\n", caractereClavier(), caractereClavier());
@@ -205,7 +231,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				speed = -1;
 			}
-//			printf("speed : %d\n", speed);
+			printf("speed : %d\n", speed);
 			demandeTemporisation(speed);
 			rafraichisFenetre();
 			break;
