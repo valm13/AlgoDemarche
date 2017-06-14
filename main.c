@@ -81,7 +81,7 @@ void gestionEvenement(EvenementGfx evenement)
 		case Initialisation:
 			demandeTemporisation(200);
 			printf("Image numero : %03d\n\n",in);
-			sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
+			sprintf(nomImage,"Pictures2/pic%03d.bmp",in+1);
 			printf("\nChargement de l'image\n");
 			chargeImage(nomImage,&img);
 			printf("Image chargée\n");
@@ -93,7 +93,7 @@ void gestionEvenement(EvenementGfx evenement)
 
 			identifieColor(tp,pic,in);
 			printf("fin_main\n");
-			printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
+q			printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
 
 			sommePointJoint(&pic[in]);
 			in ++;
@@ -127,7 +127,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				libereDonneesImageRGB(&img);
 				printf("Image numero : %03d\n\n",in);
-				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
+				sprintf(nomImage,"Pictures2/pic%03d.bmp",in+1);
 				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&img);
 				printf("Image chargée\n");
