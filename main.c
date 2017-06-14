@@ -9,6 +9,7 @@
 #include "Affichage.h"
 #include "matrice.h"
 #include "analyse.h"
+#include "reconnaissance.h"
 
 // Largeur et hauteur par defaut d'une image correspondant a nos criteres
 #define LargeurFenetre 800
@@ -71,6 +72,10 @@ void gestionEvenement(EvenementGfx evenement)
 	static jointure pic[NBIMAGE];
 	static int speed = 20;
 	int touche;
+	//Taille image par rapport à la taille de la fenetre 1920 -> 800 / 1080 -> 600
+	static int ratio_x;
+	static int ratio_y;
+	
 	switch (evenement)
 	{
 		case Initialisation:
@@ -120,6 +125,7 @@ void gestionEvenement(EvenementGfx evenement)
 		case Temporisation:
 			if( in < NBIMAGE && !pause)
 			{
+				libereDonneesImageRGB(&img);
 				printf("Image numero : %03d\n\n",in);
 				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
 				printf("\nChargement de l'image\n");
@@ -140,6 +146,8 @@ void gestionEvenement(EvenementGfx evenement)
 				printf("\nCentre Rouge img%d : \nX = %d\nY = %d\n",in ,pic[in].j[0].centre.x,pic[in].j[0].centre.y);
 				in ++;
 			}
+			ratio_x = img->largeurImage/LargeurFenetre;
+			ratio_y = img->hauteurImage/HauteurFenetre;
 			rafraichisFenetre();
 			break;
 			

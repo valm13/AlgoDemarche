@@ -7,25 +7,6 @@
 #include "matrice.h"
 #include "analyse.h"
 
-//~ int main(int argc, char **argv)
-//~ {
-	//~ static DonneesImageRGB *image = NULL;
-	//~ static DonneesImageRGB imageret;
-	//~ static char nomImage[11];
-	//~ static troimat t;
-	//~ strcpy(nomImage,"Pictures/Basique.bmp"); 
-	//~ printf("\nChargement de l'image\n");
-	//~ chargeImage(nomImage,&image); 
-	//~ t=cree3matrices(*image);
-	//~ affiche_3mat(t,*image);
-	//~ matricesVersImage(t,&imageret);
-	//~ ecrisBMPRGB_Dans(&imageret,"BasiqueTransf.bmp");
-	//~ creeImage(&imageret,"BasiqueTransf.bmp");
-	
-	
-	//~ return 0;
-//~ }
-
 troimat cree3matrices(DonneesImageRGB *img)
 {
 	troimat t;
@@ -39,9 +20,6 @@ troimat cree3matrices(DonneesImageRGB *img)
 		}
 		
 	}
-	//~ printf("%d\n",t.b[550][555]);
-	//~ printf("%d\n",t.v[550][555]);
-	//~ printf("%d\n",t.r[550][555]);
 	return t;
 }
 

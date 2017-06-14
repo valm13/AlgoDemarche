@@ -1,6 +1,7 @@
 #ifndef MATRICE_H
 #define MATRICE_H
 #include "config.h"
+#include "libISEN/BmpLib.h"
 
 typedef struct troimat{
 	int r[HAUTEUR][LARGEUR];
