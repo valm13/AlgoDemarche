@@ -69,24 +69,18 @@ void ClicApprentissage (int EtatMenu, int *SelecCase) //Change la variable en fo
 
 void ClicFilmer (int *EtatFilmer, int EtatMenu, int SelecCase, int SelecBouton) // Cahnge d'état si on filme
 {
-	if (EtatMenu == 1 && SelecBouton == 1 && SelecCase !=0 && abscisseSouris() > largeurFenetre()*9/32 && ordonneeSouris() > hauteurFenetre()*1/24 && abscisseSouris() < largeurFenetre()*22/32 && ordonneeSouris() < hauteurFenetre()*2/12)
+	if (EtatMenu == 1 && abscisseSouris() > largeurFenetre()*9/32 && ordonneeSouris() > hauteurFenetre()*1/24 && abscisseSouris() < largeurFenetre()*22/32 && ordonneeSouris() < hauteurFenetre()*2/12)
 	{
-		if (*EtatFilmer == 0)
-			*EtatFilmer = 1;
-		
-		else if (*EtatFilmer == 1)
-			*EtatFilmer = 2;
-			
-	}
-
-	if (EtatMenu == 1 && SelecBouton == 2 && abscisseSouris() > largeurFenetre()*9/32 && ordonneeSouris() > hauteurFenetre()*1/24 && abscisseSouris() < largeurFenetre()*22/32 && ordonneeSouris() < hauteurFenetre()*2/12)
-	{
-
-		if (*EtatFilmer == 0)
-			*EtatFilmer = 1;
-		
-		else if (*EtatFilmer == 1)
-			*EtatFilmer = 0;		
+		system("./script.sh");
+		printf("fimer\n");
+		if ( SelecBouton == 1 && SelecCase !=0)
+		{
+				*EtatFilmer = !*EtatFilmer;
+		}
+		if (SelecBouton == 2 )
+		{
+			*EtatFilmer = !*EtatFilmer;
+		}
 	}
 }
 
