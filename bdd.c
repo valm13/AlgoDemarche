@@ -10,7 +10,7 @@
 
 #include "bdd.h"
 
-int store_values(char *file_name, jointure donne, stats statistique)
+int store_values(char *file_name,stats statistique[JOINT])
 {
 	int rv = 0;
 	FILE *fp;
@@ -21,13 +21,12 @@ int store_values(char *file_name, jointure donne, stats statistique)
 	}
 	else
 	{
-		fwrite(&donne, sizeof(jointure), 1, fp);
-		fwrite(&statistique, sizeof(stats), 1, fp);
+		fwrite(statistique, sizeof(stats), JOINT, fp);
 		fclose(fp);
 	}
 	return rv;
 }
-int restore_values(char *file_name, jointure *donne, stats *statistique)
+int restore_values(char *file_name,stats statistique[JOINT])
 {
 	int rv = 0;
 	FILE *fp;
@@ -38,8 +37,7 @@ int restore_values(char *file_name, jointure *donne, stats *statistique)
 	}
 	else
 	{
-		fread(donne, sizeof(jointure), 1, fp);
-		fread(statistique, sizeof(stats), 1, fp);
+		fread(statistique, sizeof(stats), JOINT, fp);
 	}
 	return rv;
 }

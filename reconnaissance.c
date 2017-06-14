@@ -2,24 +2,75 @@
 #include <stdlib.h>
 #include <math.h>
 #include "reconnaissance.h"
+#include "bdd.h"
 
-void calcStats(info xy[JOINT], stats *s) // Calcule les statistiques d'une courbe, le faire directement sur JOINT courbe ? dans ce cas il faudrait un tableau de stats.
+void apprentissage(jointure j,stats s[JOINT],int id)
 {
-	printf("\nCalcul de la valeur moyenne :\t");
-	calcMeanValue(xy,s);
-	printf("FAIT\n");
+	char fileName[10];
+	calcStats(j.j,s);
+	sprintf(fileName,"%d",id);
+	store_values(fileName,j,s);
+}
+
+int reconnaissance(info xy[JOINT])
+{
+	stats test[JOINT];
+	stats col[JOINT];
+	stats dam[JOINT];
+	stats val[JOINT];
+	float T1[JOINT][NBPOURCENT];
+	float T2[JOINT][NBPOURCENT];
+	float T3[JOINT][NBPOURCENT];
+	int Correct1[JOINT];
+	int Correct2[JOINT];
+	int Correct3[JOINT];
+	int a = 0;
+	int b = 0;
+	int c = 0;
 	
-	printf("Calcul de l'écart type :\t");
-	calcDeviaValue(xy,s);
-	printf("FAIT\n");
-	
-	printf("Calcul de la longueur :\t");
-	calcLenght(xy,s);
-	printf("FAIT\n");
-	
-	printf("Calcul du Min et du Max :\t");
-	calcMinMax(xy,s);
-	printf("FAIT\n");
+	calcStats(xy,test);
+	calcTabPourc(col,test,T1);
+	calcTabPourc(dam,test,T2);
+	calcTabPourc(val,test,T3);
+	identifieCourbe(T1,Correct1);
+	identifieCourbe(T2,Correct2);
+	identifieCourbe(T3,Correct3);
+	for(int i = 0;i<NBPOURCENT;i++)
+	{
+		a += Correct1[i];
+		b += Correct2[i];
+		c += Correct3[i];
+	}
+	if(a > b && a > c)
+	return 1;
+	else if(b > a && b > c)
+	return 2;
+	else if(c > a && c > b)
+	return 3;
+	else return 0;
+}
+
+void calcStats(info xy[JOINT], stats s[JOINT]) // Calcule les statistiques d'une courbe, le faire directement sur JOINT courbe ? dans ce cas il faudrait un tableau de stats.
+{
+	for(int i = 0;i < JOINT;i++)
+	{
+		printf("Courbe n°%d\n",i);
+		printf("\nCalcul de la valeur moyenne :\t");
+		calcMeanValue(xy[i],&(s[i]));
+		printf("FAIT\n");
+		
+		printf("Calcul de l'écart type :\t");
+		calcDeviaValue(xy[i],&(s[i]));
+		printf("FAIT\n");
+		
+		printf("Calcul de la longueur :\t");
+		calcLenght(xy[i],&(s[i]));
+		printf("FAIT\n");
+		
+		printf("Calcul du Min et du Max :\t");
+		calcMinMax(xy[i],&(s[i]));
+		printf("FAIT\n");
+	}
 }
 
 void calcMeanValue(info xy,stats *s) // Somme de toutes les x et de tous les y.
@@ -113,7 +164,7 @@ float moyenne(float T[NBPOURCENT])
 	return f / NBPOURCENT;
 }
 
-int identifieCourbe(float T[JOINT][NBPOURCENT],int TabCorrect[JOINT]) // Return tableau d'entier 0 ou 1
+void identifieCourbe(float T[JOINT][NBPOURCENT],int TabCorrect[JOINT]) // Return tableau d'entier 0 ou 1
 {
 	float TabMoy[JOINT];
 	float Acceptation[JOINT] = {10,12,10,14,10}; // Pied, Genoux, Main, Coude, Epaule
@@ -131,5 +182,4 @@ int identifieCourbe(float T[JOINT][NBPOURCENT],int TabCorrect[JOINT]) // Return 
 		else
 		TabCorrect[i] = 0;
 	}
-	return 0;
 }
