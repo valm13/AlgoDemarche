@@ -13,6 +13,41 @@
 
 #define CIRCLE_RADIUS 200
 
+#define JOINT 5	// Jointures des articulation Main Coude Pied Epaule Genoux
+#define MAXPIXJOINT 480000	// Jointures des articulation
+
+
+
+typedef struct posi{
+	int x,y;
+}posi;
+
+typedef struct posf{
+	float x,y;
+}posf;
+
+typedef struct info{
+	posi position[MAXPIXJOINT]; // y puis x
+	int nb;
+	posi centre;
+}info;
+
+typedef struct jointure{
+	info j[JOINT];
+
+}jointure;
+
+typedef struct hull{
+	int min,max;
+}hull;
+
+typedef struct stats{
+	int lenght;
+	posf mean;
+	posf devia;
+	hull h;
+}stats;
+
 
 /**********************************************************************************/
 /**************************     macro function          ***************************/
