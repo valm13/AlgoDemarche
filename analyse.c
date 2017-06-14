@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "config.h"
 #include "libISEN/BmpLib.h"
 #include "matrice.h"
 #include "analyse.h"
@@ -117,8 +118,9 @@ int calculH(determ det,int r,int g,int b)
 
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
-	int offset = 5;
-	int target[JOINT] = {270, 48 ,330, 87, 205};
+	int offset = 4;
+//	int target[JOINT] = {273, 48 ,330, 80, 205};
+	int target[JOINT] = { 205, 80, 330 ,273, 48 };
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
@@ -177,9 +179,10 @@ void initialiseTabPoint(jointure pic[NBIMAGE],int z)
 
 void sommePointJoint(jointure *pic) // Trouve les coordonnées du centre des cercle (jointure)
 {
-	int i,h;
+	int i,h,j;
 	int som_x;
 	int som_y;
+	int tmp_lenght;
 	
 	for(h=0;h<JOINT;h++)
 	{
@@ -189,13 +192,28 @@ void sommePointJoint(jointure *pic) // Trouve les coordonnées du centre des cer
 		{
 			som_x += pic->j[h].position[i].x;
 			som_y += pic->j[h].position[i].y;
-//			printf(" (%d,%d)",pic->j[h].position[i].x,pic->j[h].position[i].y);
 		}
 		if(pic->j[h].nb > 500)
 		{
 			pic->j[h].centre.x=som_x/pic->j[h].nb;
-			pic->j[h].centre.y=som_y/pic->j[h].nb;
-//			printf(" \nNb = %d ,Joint : %d , (%d,%d)\n",pic->j[h].nb,h,pic->j[h].centre.x,pic->j[h].centre.y);
+			pic->j[h].centre.y=som_y/pic->j[h].nb;som_x=0;
+			som_y=0;
+			tmp_lenght = 0;
+			for(j=0;j<pic->j[h].nb;j++)
+			{
+				if (BETWEEN(pic->j[h].position[i].x, pic->j[h].centre.x - CIRCLE_RADIUS, pic->j[h].centre.x - CIRCLE_RADIUS))
+				{
+					som_x += pic->j[h].position[i].x;
+					som_y += pic->j[h].position[i].y;
+					tmp_lenght ++;
+				}
+			}
+			if(tmp_lenght > 500)
+			{
+				pic->j[h].centre.x=som_x/tmp_lenght;
+				pic->j[h].centre.y=som_y/tmp_lenght;
+	//			printf(" \nNb = %d ,Joint : %d , (%d,%d)\n",pic->j[h].nb,h,pic->j[h].centre.x,pic->j[h].centre.y);
+			}
 		}
 		
 	}

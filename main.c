@@ -59,7 +59,7 @@ des qu'une evenement survient */
 void gestionEvenement(EvenementGfx evenement)
 {
 	static bool pause = true;
-	static int in;
+	static int in = START_IMAGE;
 	static image tp;
 	static int EtatMenu = 0;
 	static int SelecBouton = 0;
@@ -69,6 +69,8 @@ void gestionEvenement(EvenementGfx evenement)
 	static char nomImage[11];
 	static troimat mat;
 	static jointure pic[NBIMAGE];
+	static int speed = 20;
+	int touche;
 	switch (evenement)
 	{
 		case Initialisation:
@@ -159,7 +161,7 @@ void gestionEvenement(EvenementGfx evenement)
 			couleurCourante(0,0,0);
 
 	
-				for(int t=0;t<in-1;t++)//NBIMAGE;t++)
+				for(int t=START_IMAGE;t<in-1;t++)//NBIMAGE;t++)
 				{
 					for(int k=0;k<JOINT;k++)
 					{	
@@ -211,14 +213,7 @@ void gestionEvenement(EvenementGfx evenement)
 
 				case 'R':
 				case 'r':
-					// Configure le systeme pour generer un message Temporisation
-					// toutes les 20 millisecondes (rapide)
-					demandeTemporisation(20);
-					break;
-
-				case 'L':
-				case 'l':
-					demandeTemporisation(100);
+					in = START_IMAGE;
 					break;
 
 				case 'p':
@@ -237,7 +232,24 @@ void gestionEvenement(EvenementGfx evenement)
 			break;
 			
 		case ClavierSpecial:
-			printf("ASCII %d\n", toucheClavier());
+			touche = toucheClavier();
+			printf("ASCII %d\n", touche);
+			switch (touche) {
+				case 13:
+					speed+=10;
+					break;
+				case 14:
+					speed-=10;
+					break;
+				default:
+					break;
+			}
+			if(speed < 0)
+			{
+				speed = 0;
+			}
+			printf("speed : %d\n", speed);
+			demandeTemporisation(speed);
 			break;
 
 		case BoutonSouris:
