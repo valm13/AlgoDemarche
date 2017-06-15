@@ -3,7 +3,19 @@
 #include <math.h>
 #include "reconnaissance.h"
 #include "bdd.h"
-
+void afficheStats(stats s[JOINT])
+{
+	for(int i=0;i<JOINT;i++)
+	{
+		printf("Jointure numero %d \n\n",i);
+		printf("Mean of x = %.1f\n",s[i].mean.x);
+		printf("Mean of y = %.1f\n",s[i].mean.y);
+		printf("Deviation of x = %.1f\n",s[i].devia.x);
+		printf("Deviation of y = %.1f\n",s[i].devia.y);
+		printf("Minimun of the curve = %d\n",s[i].h.min);
+		printf("Maximum of the curve = %d\n",s[i].h.max);
+	}
+}
 void apprentissage(jointure j[NBIMAGE],stats s[JOINT],int id)
 {
 	char fileName[10];

@@ -3,6 +3,7 @@
 #include "analyse.h"
 
 #define NBPOURCENT 7
+void afficheStats(stats s[JOINT]);
 void apprentissage(jointure j[NBIMAGE],stats s[JOINT],int id);
 int reconnaissance(jointure j[NBIMAGE]);
 
