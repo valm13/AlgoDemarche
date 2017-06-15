@@ -68,7 +68,6 @@ void gestionEvenement(EvenementGfx evenement)
 	static int SelecCase = 0;
 	static int EtatFilmer = 0;
 	static int ChoixLangue = 1;
-	static int z = 0;
 	
 	static tabbouton t;
 	static bool pleinEcran = false; 
@@ -79,6 +78,8 @@ void gestionEvenement(EvenementGfx evenement)
 	static jointure pic[NBIMAGE];
 	static stats statistiques[JOINT];
 	static int speed = 20;
+
+	static int z = 0;
 	int touche;
 	static int in = START_IMAGE;
 	//Taille image par rapport à la taille de la fenetre 1920 -> 800 / 1080 -> 600
