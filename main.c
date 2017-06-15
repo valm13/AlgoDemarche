@@ -120,7 +120,9 @@ void gestionEvenement(EvenementGfx evenement)
 			else if (in >= (NBIMAGE - 1))
 			{
 				EtatFilmer = false;
+				printf("\nSauvegarde des statistiques :\t");
 				apprentissage(pic, statistiques,1);
+				printf("Fait\n");
 			}
 
 			rafraichisFenetre();
