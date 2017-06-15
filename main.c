@@ -70,7 +70,7 @@ void gestionEvenement(EvenementGfx evenement)
 	static int SelecBouton = 0;
 	static int SelecCase = 0;
 	static int EtatFilmer = 0;
-	static int ChoixLangue = 0;
+	static int ChoixLangue = 1;
 	
 	static tabbouton t;
 	static bool pleinEcran = false; 
