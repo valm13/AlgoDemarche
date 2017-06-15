@@ -4,15 +4,18 @@
 #include "reconnaissance.h"
 #include "bdd.h"
 
-void apprentissage(jointure j,stats s[JOINT],int id)
+void apprentissage(jointure j[NBIMAGE],stats s[JOINT],int id)
 {
 	char fileName[10];
-	calcStats(j.j,s);
+	for(int i=0;i<JOINT;i++)
+	{
+		calcStats(j,s,i);
+	}
 	sprintf(fileName,"%d",id);
 	store_values(fileName,s);
 }
 
-int reconnaissance(info xy[JOINT])
+int reconnaissance(jointure j[NBIMAGE])
 {
 	stats test[JOINT];
 	stats col[JOINT];
@@ -27,8 +30,9 @@ int reconnaissance(info xy[JOINT])
 	int a = 0;
 	int b = 0;
 	int c = 0;
+	for(int jointactive=0;jointactive<JOINT;jointactive++)
+	calcStats(j,test,jointactive);
 	
-	calcStats(xy,test);
 	calcTabPourc(col,test,T1);
 	calcTabPourc(dam,test,T2);
 	calcTabPourc(val,test,T3);
@@ -50,82 +54,79 @@ int reconnaissance(info xy[JOINT])
 	else return 0;
 }
 
-void calcStats(info xy[JOINT], stats s[JOINT]) // Calcule les statistiques d'une courbe, le faire directement sur JOINT courbe ? dans ce cas il faudrait un tableau de stats.
+void calcStats(jointure xy[NBIMAGE], stats s[JOINT],int jointactive) // Calcule les statistiques d'une courbe, le faire directement sur JOINT courbe ? dans ce cas il faudrait un tableau de stats.
 {
-	for(int i = 0;i < JOINT;i++)
-	{
-		printf("Courbe n°%d\n",i);
+		printf("Courbe n°%d\n",jointactive+1);
 		printf("\nCalcul de la valeur moyenne :\t");
-		calcMeanValue(xy[i],&(s[i]));
+		calcMeanValue(xy,&(s[jointactive]),jointactive);
 		printf("FAIT\n");
 		
 		printf("Calcul de l'écart type :\t");
-		calcDeviaValue(xy[i],&(s[i]));
+		calcDeviaValue(xy,&(s[jointactive]),jointactive);
 		printf("FAIT\n");
 		
 		printf("Calcul de la longueur :\t");
-		calcLenght(xy[i],&(s[i]));
+		calcLenght(xy,&(s[jointactive]),jointactive);
 		printf("FAIT\n");
 		
 		printf("Calcul du Min et du Max :\t");
-		calcMinMax(xy[i],&(s[i]));
+		calcMinMax(xy,&(s[jointactive]),jointactive);
 		printf("FAIT\n");
-	}
 }
 
-void calcMeanValue(info xy,stats *s) // Somme de toutes les x et de tous les y.
+void calcMeanValue(jointure xy[NBIMAGE],stats *s,int jointactive) // Somme de toutes les x et de tous les y.
 {
 	s->mean.x = 0;
 	s->mean.y = 0;
-	for(int i = 0;i < xy.nb;i++)
+	for(int i = 0;i < NBIMAGE;i++)
 	{
-		s->mean.x += xy.position[i].x;
-		s->mean.y += xy.position[i].y;
+		s->mean.x += xy[i].j[jointactive].centre.x;
+		s->mean.y += xy[i].j[jointactive].centre.y;
 	}
-	s->mean.x = s->mean.x /	xy.nb;
-	s->mean.y = s->mean.y /	xy.nb;
+	s->mean.x = s->mean.x /	NBIMAGE;
+	s->mean.y = s->mean.y /	NBIMAGE;
 }
 
-void calcDeviaValue(info xy, stats *s) // Calcul de l'écart type
+void calcDeviaValue(jointure xy[NBIMAGE], stats *s,int jointactive) // Calcul de l'écart type
 {
 	posf transit;
 	transit.x = 0; //Initialisation des valeurs de transition pour les calculs des sommes.
 	transit.y = 0;
 	s->devia.x = 0;
 	s->devia.y = 0;
-	for(int i = 0;i < xy.nb;i++)
+	for(int i = 0;i < NBIMAGE;i++)
 	{
-		transit.x += (xy.position[i].x - s->mean.x) * (xy.position[i].x - s->mean.x);
-		transit.y += (xy.position[i].y - s->mean.y) * (xy.position[i].y - s->mean.y);
+		transit.x += (xy[i].j[jointactive].centre.x - s->mean.x) * (xy[i].j[jointactive].centre.x - s->mean.x);
+		transit.y += (xy[i].j[jointactive].centre.y - s->mean.y) * (xy[i].j[jointactive].centre.y - s->mean.y);
 	}
-	s->devia.x = sqrtf((float)transit.x / xy.nb);
-	s->devia.y = sqrtf((float)transit.y / xy.nb);	
+	s->devia.x = sqrtf((float)transit.x / NBIMAGE);
+	s->devia.y = sqrtf((float)transit.y / NBIMAGE);	
 }
 
 int carre(int a)
 {
 	return a * a;
 }
-void calcLenght(info xy, stats *s)
+void calcLenght(jointure xy[NBIMAGE], stats *s,int jointactive)
 {
 	s->lenght += 0;
-	for(int i = 0;i < xy.nb-1;i++) // Le -1 sinon on va dépasser le tableau (prendre le n+1 de x et y qui n'existe pas !)
+	for(int i = 0;i < NBIMAGE-1;i++) // Le -1 sinon on va dépasser le tableau (prendre le n+1 de x et y qui n'existe pas !)
 	{
-			s->lenght += sqrtf(carre(xy.position[i].x - xy.position[i+1].x)
-			+ carre(xy.position[i].y - xy.position[i+1].y));
+			s->lenght += sqrtf(carre(xy[i].j[jointactive].centre.x - xy[i+1].j[jointactive].centre.x)
+			+ carre(xy[i].j[jointactive].centre.y - xy[i+1].j[jointactive].centre.y));
 	}
 }
 
-void calcMinMax(info xy, stats *s)
+void calcMinMax(jointure xy[NBIMAGE], stats *s,int jointactive)
 {
-	s->h.min = xy.position[0].y;
-	s->h.max = xy.position[0].y;
-	for(int i = 1;i < xy.nb;i++) 
+	s->h.min = xy[4].j[jointactive].centre.y;
+	s->h.max = xy[4].j[jointactive].centre.y;
+	for(int i = 1;i < NBIMAGE;i++) 
 	{
-		if(s->h.min > xy.position[i].y)
-		s->h.min = xy.position[i].y;
-		if(s->h.max < xy.position[i].y)
-		s->h.max = xy.position[i].y;
+		if(s->h.min > xy[i].j[jointactive].centre.y)
+		s->h.min = xy[i].j[jointactive].centre.y;
+		if(s->h.max < xy[i].j[jointactive].centre.y)
+		s->h.max = xy[i].j[jointactive].centre.y;
 	}
 }
 

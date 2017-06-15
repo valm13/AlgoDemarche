@@ -1,16 +1,13 @@
 #include <stdlib.h> 
 #include <stdio.h> 
-#include <math.h> 
-#include "GfxLib.h"
-#include "BmpLib.h"
-#include "ESLib.h"
-#include "GereClic.h"
-#include "Bouton.h"
 #include <string.h>
 #include <sys/resource.h>
 #include "libISEN/GfxLib.h"
 #include "libISEN/BmpLib.h"
 #include "libISEN/ESLib.h"
+#include <math.h> 
+#include "GereClic.h"
+#include "Bouton.h"
 #include "Affichage.h"
 #include "matrice.h"
 #include "analyse.h"
@@ -99,7 +96,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				if(in == START_IMAGE)
 				{
-					system("./script.sh");
+					//~ system("./script.sh");
 				}
 				libereDonneesImageRGB(&image);
 				printf("Image numero : %03d\n\n",in);
@@ -123,8 +120,7 @@ void gestionEvenement(EvenementGfx evenement)
 			else if (in >= (NBIMAGE - 1))
 			{
 				EtatFilmer = false;
-//				calcStats(pic, statistiques);
-//				apprentissage(pi, statistiques);
+				apprentissage(pic, statistiques,1);
 			}
 
 			rafraichisFenetre();
