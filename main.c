@@ -96,7 +96,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				if(in == START_IMAGE)
 				{
-//					system("./script.sh");
+					system("./script.sh");
 				}
 				libereDonneesImageRGB(&image);
 				printf("Image numero : %03d\n\n",in);
@@ -117,7 +117,7 @@ void gestionEvenement(EvenementGfx evenement)
 				sommePointJoint(&pic[in]);
 				++ in;
 			}
-			else if (in >= (NBIMAGE - 1) && z==0)
+			else if (in >= (NBIMAGE - 1) && EtatFilmer == true)
 			{
 				EtatFilmer = false;
 				printf("\nSauvegarde des statistiques :\t");
@@ -125,7 +125,6 @@ void gestionEvenement(EvenementGfx evenement)
 				printf("Fait\n");
 				printf("Affichage des statistiques : \n");
 				afficheStats(statistiques);
-				z=1;
 			}
 
 			rafraichisFenetre();
