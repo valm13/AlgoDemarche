@@ -1,16 +1,13 @@
 #include <stdlib.h> 
 #include <stdio.h> 
-#include <math.h> 
-#include "GfxLib.h"
-#include "BmpLib.h"
-#include "ESLib.h"
-#include "GereClic.h"
-#include "Bouton.h"
 #include <string.h>
 #include <sys/resource.h>
 #include "libISEN/GfxLib.h"
 #include "libISEN/BmpLib.h"
 #include "libISEN/ESLib.h"
+#include <math.h> 
+#include "GereClic.h"
+#include "Bouton.h"
 #include "Affichage.h"
 #include "matrice.h"
 #include "analyse.h"
@@ -71,6 +68,7 @@ void gestionEvenement(EvenementGfx evenement)
 	static int SelecCase = 0;
 	static int EtatFilmer = 0;
 	static int ChoixLangue = 1;
+	static int z = 0;
 	
 	static tabbouton t;
 	static bool pleinEcran = false; 
@@ -104,27 +102,31 @@ void gestionEvenement(EvenementGfx evenement)
 				libereDonneesImageRGB(&image);
 				printf("Image numero : %03d\n\n",in);
 				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
-//				printf("\nChargement de l'image\n");
+				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&image);
-//				printf("Image chargée\n");
-//				printf("image->largeurImage = %d\n",image->largeurImage);
+				printf("Image chargée\n");
+				printf("image->largeurImage = %d\n",image->largeurImage);
 				mat=cree3matrices(image);
-//				printf("Matrice crée : Fait !\n");
+				printf("Matrice crée : Fait !\n");
 				tp = rgbToHsv(mat);
-//				printf("Transformation RGB->HSV : Fait !\n");
+				printf("Transformation RGB->HSV : Fait !\n");
 
 				identifieColor(tp, pic, in);
-//				printf("fin_main\n");
-//				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
+				printf("fin_main\n");
+				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
 
 				sommePointJoint(&pic[in]);
 				++ in;
 			}
-			else if (in >= (NBIMAGE - 1))
+			else if (in >= (NBIMAGE - 1) && z==0)
 			{
 				EtatFilmer = false;
-//				calcStats(pic, statistiques);
-//				apprentissage(pic, statistiques);
+				printf("\nSauvegarde des statistiques :\t");
+				apprentissage(pic, statistiques,1);
+				printf("Fait\n");
+				printf("Affichage des statistiques : \n");
+				afficheStats(statistiques);
+				z=1;
 			}
 
 			rafraichisFenetre();
