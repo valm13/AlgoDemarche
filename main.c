@@ -78,8 +78,6 @@ void gestionEvenement(EvenementGfx evenement)
 	static jointure pic[NBIMAGE];
 	static stats statistiques[JOINT];
 	static int speed = 20;
-
-	static int z = 0;
 	int touche;
 	static int in = START_IMAGE;
 	//Taille image par rapport à la taille de la fenetre 1920 -> 800 / 1080 -> 600
