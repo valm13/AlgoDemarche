@@ -118,8 +118,8 @@ int calculH(determ det,int r,int g,int b)
 
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
-	int offset = 3;
-	int target[JOINT] = { 80, 300, 325 ,44, 190 };
+	int offset = 4;
+	int target[JOINT] = { 82, 330, 207 ,35, 273 };
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 
@@ -199,17 +199,23 @@ void sommePointJoint(jointure *pic) // Trouve les coordonnées du centre des cer
 			tmp_lenght = 0;
 			for(j=0;j<pic->j[h].nb;j++)
 			{
-				if (BETWEEN(pic->j[h].position[i].x, pic->j[h].centre.x - CIRCLE_RADIUS, pic->j[h].centre.x - CIRCLE_RADIUS))
+				if (BETWEEN(pic->j[h].position[j].x, pic->j[h].centre.x - CIRCLE_RADIUS, pic->j[h].centre.x + CIRCLE_RADIUS))
 				{
-					som_x += pic->j[h].position[i].x;
-					som_y += pic->j[h].position[i].y;
+					som_x += pic->j[h].position[j].x;
+					som_y += pic->j[h].position[j].y;
 					tmp_lenght ++;
 				}
 			}
+//			printf("lenght %d \n", tmp_lenght);
 			if(tmp_lenght > 500)
 			{
 				pic->j[h].centre.x=som_x/tmp_lenght;
 				pic->j[h].centre.y=som_y/tmp_lenght;
+			}
+			else
+			{
+				pic->j[h].centre.x=0;
+				pic->j[h].centre.y=0;
 			}
 		}
 		

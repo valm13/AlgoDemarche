@@ -99,23 +99,23 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				if(in == START_IMAGE)
 				{
-					system("./script.sh");
+//					system("./script.sh");
 				}
 				libereDonneesImageRGB(&image);
 				printf("Image numero : %03d\n\n",in);
 				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
-				printf("\nChargement de l'image\n");
+//				printf("\nChargement de l'image\n");
 				chargeImage(nomImage,&image);
-				printf("Image chargée\n");
-				printf("image->largeurImage = %d\n",image->largeurImage);
+//				printf("Image chargée\n");
+//				printf("image->largeurImage = %d\n",image->largeurImage);
 				mat=cree3matrices(image);
-				printf("Matrice crée : Fait !\n");
+//				printf("Matrice crée : Fait !\n");
 				tp = rgbToHsv(mat);
-				printf("Transformation RGB->HSV : Fait !\n");
+//				printf("Transformation RGB->HSV : Fait !\n");
 
 				identifieColor(tp, pic, in);
-				printf("fin_main\n");
-				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
+//				printf("fin_main\n");
+//				printf("pic[%d].j[0].nb = %d\n",in,pic[in].j[0].nb);
 
 				sommePointJoint(&pic[in]);
 				++ in;
@@ -124,7 +124,7 @@ void gestionEvenement(EvenementGfx evenement)
 			{
 				EtatFilmer = false;
 //				calcStats(pic, statistiques);
-//				apprentissage(pi, statistiques);
+//				apprentissage(pic, statistiques);
 			}
 
 			rafraichisFenetre();
