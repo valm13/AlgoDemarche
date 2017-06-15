@@ -71,7 +71,6 @@ void ClicFilmer (int *EtatFilmer, int EtatMenu, int SelecCase, int SelecBouton) 
 {
 	if (EtatMenu == 1 && abscisseSouris() > largeurFenetre()*9/32 && ordonneeSouris() > hauteurFenetre()*1/24 && abscisseSouris() < largeurFenetre()*22/32 && ordonneeSouris() < hauteurFenetre()*2/12)
 	{
-		system("./script.sh");
 		printf("fimer\n");
 		if ( SelecBouton == 1 && SelecCase !=0)
 		{

@@ -118,8 +118,8 @@ int calculH(determ det,int r,int g,int b)
 
 void ChangePixCouleurImg(image t,int color[HAUTEUR][LARGEUR])
 {
-	int offset = 4;
-	int target[JOINT] = { 205, 80, 330 ,273, 48 };
+	int offset = 3;
+	int target[JOINT] = { 80, 300, 325 ,44, 190 };
 	for(int i = 0; i < HAUTEUR; i++)
 		{
 

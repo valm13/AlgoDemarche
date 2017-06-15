@@ -2,7 +2,7 @@ rm -r Pictures
 mkdir Pictures
 rm -f video.h264
 echo "taking pictures"
-ssh -t pi@192.168.1.2 "raspivid -o video/video.h264 -t 6000"
+ssh -t pi@192.168.1.2 "raspivid -o video/video.h264 -rot 180 -t 6000"
 echo "coping video from rapsi"
 scp pi@192.168.1.2:~/video/video.h264 .
 echo "extract pictures"

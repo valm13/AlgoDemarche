@@ -79,6 +79,7 @@ void gestionEvenement(EvenementGfx evenement)
 	static char nomImage[11];
 	static troimat mat;
 	static jointure pic[NBIMAGE];
+	static stats statistiques[JOINT];
 	static int speed = 20;
 	int touche;
 	static int in = START_IMAGE;
@@ -87,7 +88,6 @@ void gestionEvenement(EvenementGfx evenement)
 	switch (evenement)
 	{
 		case Initialisation:
-			image = lisBMPRGB("Pictures/pic001.bmp");
 			rafraichisFenetre();
 			demandeTemporisation(400);
 			sauveTexteBouton( ChoixLangue);
@@ -97,6 +97,10 @@ void gestionEvenement(EvenementGfx evenement)
 		case Temporisation:
 			if (EtatFilmer == true && in < (NBIMAGE - 1))
 			{
+				if(in == START_IMAGE)
+				{
+					system("./script.sh");
+				}
 				libereDonneesImageRGB(&image);
 				printf("Image numero : %03d\n\n",in);
 				sprintf(nomImage,"Pictures/pic%03d.bmp",in+1);
@@ -119,6 +123,8 @@ void gestionEvenement(EvenementGfx evenement)
 			else if (in >= (NBIMAGE - 1))
 			{
 				EtatFilmer = false;
+//				calcStats(pic, statistiques);
+//				apprentissage(pi, statistiques);
 			}
 
 			rafraichisFenetre();
@@ -245,6 +251,10 @@ void gestionEvenement(EvenementGfx evenement)
 				ClicOk (&EtatMenu, &SelecBouton, &SelecCase, &EtatFilmer);
 				ClicApprentissage (EtatMenu, &SelecCase);
 				ClicFilmer (&EtatFilmer, EtatMenu, SelecCase, SelecBouton);
+				if (EtatFilmer == 1)
+				{
+					in = START_IMAGE;
+				}
 
 			}
 			else if (etatBoutonSouris() == GaucheRelache)

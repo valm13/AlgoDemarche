@@ -11,7 +11,7 @@
 
 #define START_IMAGE 4
 
-#define CIRCLE_RADIUS 200
+#define CIRCLE_RADIUS 150
 
 #define JOINT 5	// Jointures des articulation Main Coude Pied Epaule Genoux
 #define MAXPIXJOINT 480000	// Jointures des articulation
