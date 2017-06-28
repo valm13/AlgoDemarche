@@ -23,7 +23,7 @@ troimat cree3matrices(DonneesImageRGB *img)
 	return t;
 }
 
-void affiche_3mat(troimat t, DonneesImageRGB img)
+void affiche_3mat(troimat t)
 {
 	for(int i = 0; i < HAUTEUR; i++)
 	{
