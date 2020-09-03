@@ -1,2 +1,2 @@
-# AlgoDemarche
-CIR1 Projet Algo : Analyseur de démarche
+# Gait analysis Project
+CIR1 Algorithmic project (1st year in ISEN)
